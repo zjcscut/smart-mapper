@@ -15,7 +15,6 @@ import org.throwable.mapper.configuration.prop.PropertiesConfiguration;
 import org.throwable.mapper.exception.BeanReflectionException;
 import org.throwable.mapper.support.repository.EntityInfoRepository;
 import org.throwable.mapper.support.repository.NameStyleContext;
-import org.throwable.mapper.support.repository.NameStyleHandlerFactory;
 
 import javax.persistence.*;
 import java.util.LinkedHashSet;
@@ -103,7 +102,7 @@ public class EntityTableAssisor extends EntityInfoRepository {
 		if (null != entityTableMap.get(entityClass)) {
 			return;
 		}
-		NameStyleEnum style = null;
+		NameStyleEnum style = configuration.getStyle();
 		//style，该注解优先于全局配置
 		if (entityClass.isAnnotationPresent(NameStyle.class)) {
 			NameStyle nameStyle = entityClass.getAnnotation(NameStyle.class);
@@ -128,8 +127,7 @@ public class EntityTableAssisor extends EntityInfoRepository {
 		entityTable.setEntityClassPKColumns(new LinkedHashSet<>());
 		//处理所有列
 		List<EntityField> fields;
-//		if (config.isEnableMethodAnnotation()) {
-		if (true) {
+		if (configuration.isEnableMethodAnnotation()) {
 			fields = EntityFieldAssistor.getEntityFieldsProperties(entityClass);
 		} else {
 			fields = EntityFieldAssistor.getEntityFields(entityClass);
