@@ -1,0 +1,97 @@
+package org.throwable.mapper.utils;
+
+import org.apache.commons.lang3.StringUtils;
+import org.throwable.mapper.support.assist.SqlAppendAssistor;
+import org.throwable.mapper.support.plugins.DynamicTableName;
+
+/**
+ * @author jearton
+ * @since 2016/12/16
+ */
+@SuppressWarnings("unused")
+public abstract class OGNL {
+
+    private final static String CLASS_NAME = "@org.throwable.mapper.utils.OGNL";
+
+    public final static String TRIM_AND_TO_LOWERCASE = CLASS_NAME + "@trimAndToLowerCase(%s)";
+
+    public final static String REMOVE_DELIMITER = CLASS_NAME + "@removeDelimiter(%s)";
+
+    public final static String ADD_DELIMITER = CLASS_NAME + "@addDelimiter(%s)";
+
+    public final static String CHECK_FOR_NULL = CLASS_NAME + "@checkForNull(%s,%s)";
+
+    public final static String CHECK_FOR_BLANK = CLASS_NAME + "@checkForBlank(%s,%s)";
+
+    public static String trimAndToLowerCase(String s) {
+        return Strings.trimAndToLowerCase(s);
+    }
+
+    public static String removeDelimiter(String column) {
+        return SqlAppendAssistor.removeDelimiter(column);
+    }
+
+    public static String addDelimiter(String column) {
+        return SqlAppendAssistor.addDelimiter(column);
+    }
+
+    public static boolean checkForNull(Object parameter, String messageIfNull) {
+        if (null == parameter) {
+            throw new IllegalArgumentException(messageIfNull);
+        }
+        return true;
+    }
+
+    public static boolean checkForBlank(String parameter, String messageIfBlank) {
+        if (StringUtils.isBlank(parameter)) {
+            throw new IllegalArgumentException(messageIfBlank);
+        }
+        return true;
+    }
+
+	/**
+	 * 是否包含自定义查询列
+	 *
+	 * @param parameter
+	 * @return
+	 */
+//	public static boolean hasSelectColumns(Object parameter) {
+//		if (parameter != null && parameter instanceof Example) {
+//			Example example = (Example) parameter;
+//			if (example.getSelectColumns() != null && example.getSelectColumns().size() > 0) {
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
+
+//	/**
+//	 * 不包含自定义查询列
+//	 *
+//	 * @param parameter
+//	 * @return
+//	 */
+//	public static boolean hasNoSelectColumns(Object parameter) {
+//		return !hasSelectColumns(parameter);
+//	}
+
+	/**
+	 * 判断参数是否支持动态表名
+	 *
+	 * @param parameter
+	 * @return true支持，false不支持
+	 */
+	public static boolean isDynamicParameter(Object parameter) {
+		return parameter != null && parameter instanceof DynamicTableName;
+	}
+
+	/**
+	 * 判断参数是否b支持动态表名
+	 *
+	 * @param parameter
+	 * @return true不支持，false支持
+	 */
+	public static boolean isNotDynamicParameter(Object parameter) {
+		return !isDynamicParameter(parameter);
+	}
+}
