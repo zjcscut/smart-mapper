@@ -2,7 +2,7 @@ package org.throwable.mapper.support.assist;
 
 import org.junit.Test;
 import org.throwable.mapper.common.entity.EntityField;
-import org.throwable.mapper.common.entity.User;
+import org.throwable.mapper.common.entity.test.User;
 
 import java.util.List;
 

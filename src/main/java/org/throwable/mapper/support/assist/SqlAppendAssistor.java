@@ -28,7 +28,7 @@ import static org.throwable.mapper.utils.OGNL.*;
  * @since 2017/4/4 0:07
  */
 @Slf4j
-public abstract class SqlAppendAssistor {
+public  abstract class SqlAppendAssistor {
 
 	public static String checkDefaultParamValue() {
 		return checkParamValue(PARAM_DEFAULT);
@@ -265,10 +265,10 @@ public abstract class SqlAppendAssistor {
 	static String getDynamicTableName(Class<?> entityClass, String defaultTableName, String parameterName) {
 		if (DynamicTableName.class.isAssignableFrom(entityClass)) {
 			String entityPrefix = getEntityPrefix(parameterName);
-			return "<if test=\"@tk.mybatis.mapper.util.OGNL@isDynamicParameter(" + parameterName + ") and @jodd.util.StringUtil@isNotBlank(" + entityPrefix + "dynamicTableName)\">\n" +
+			return "<if test=\"@org.throwable.mapper.utils.OGNL@isDynamicParameter(" + parameterName + ") and @jodd.util.StringUtil@isNotBlank(" + entityPrefix + "dynamicTableName)\">\n" +
 					"${" + entityPrefix + "dynamicTableName}\n" +
 					"</if>\n" +
-					"<if test=\"@tk.mybatis.mapper.util.OGNL@isNotDynamicParameter(" + parameterName + ") or @jodd.util.StringUtil@isBlank(" + entityPrefix + "dynamicTableName)\">\n" +
+					"<if test=\"@org.throwable.mapper.utils.OGNL@isNotDynamicParameter(" + parameterName + ") or @jodd.util.StringUtil@isBlank(" + entityPrefix + "dynamicTableName)\">\n" +
 					defaultTableName + "\n" +
 					"</if>";
 		} else {

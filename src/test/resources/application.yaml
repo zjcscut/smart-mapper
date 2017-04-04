@@ -1,0 +1,11 @@
+server:
+  port: 9090
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/mapper?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+smart-mapper:
+  mapper-locations: mappings/*.xml
+  type-aliases-package: org.throwable.mapper.common.entity.test

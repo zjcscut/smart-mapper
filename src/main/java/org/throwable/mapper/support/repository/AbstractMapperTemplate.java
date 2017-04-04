@@ -55,7 +55,7 @@ public abstract class AbstractMapperTemplate {
 	}
 
 	public static Class<?> getMapperClass(String msId) {
-		if (msId.contains(".")) {
+		if (!msId.contains(".")) {
 			throw new UnsupportedOperationException("当前MappedStatement的id=" + msId + ",不符合MappedStatement的规则!");
 		}
 		String mapperClassStr = msId.substring(0, msId.lastIndexOf("."));

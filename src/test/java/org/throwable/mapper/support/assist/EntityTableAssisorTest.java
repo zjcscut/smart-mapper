@@ -1,9 +1,7 @@
 package org.throwable.mapper.support.assist;
 
 import org.junit.Test;
-import org.throwable.mapper.common.entity.User;
-
-import static org.junit.Assert.*;
+import org.throwable.mapper.common.entity.test.User;
 
 /**
  * @author throwable
@@ -34,7 +32,7 @@ public class EntityTableAssisorTest {
 
 	@Test
 	public void initEntityNameMap() throws Exception {
-		EntityTableAssisor.initEntityNameMap(User.class);
+//		EntityTableAssisor.initEntityNameMap(User.class);
 		EntityTableAssisor.getDefaultSelectClause(User.class);
 
 	}

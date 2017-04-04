@@ -1,8 +1,7 @@
-package org.throwable.mapper.common.entity;
+package org.throwable.mapper.common.entity.test;
 
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
-import org.apache.ibatis.type.TypeHandler;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;

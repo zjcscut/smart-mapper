@@ -90,9 +90,9 @@ public class MapperTemplateAssistor {
 		}
 		AbstractMapperTemplate mapperTemplate;
 		try {
-			mapperTemplate = (AbstractMapperTemplate) templateClass.getConstructor(Class.class, AbstractMapperTemplate.class).newInstance(mapperClass, this);
+			mapperTemplate = (AbstractMapperTemplate) templateClass.getConstructor(Class.class, MapperTemplateAssistor.class).newInstance(mapperClass, this);
 		} catch (Exception e) {
-			throw new UnsupportedOperationException("实例化AbstractMapperTemplate对象失败:" + e.getMessage());
+			throw new UnsupportedOperationException(String.format("实例化AbstractMapperTemplate对象失败:%s",e));
 		}
 		//注册方法
 		for (String methodName : methodSet) {

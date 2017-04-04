@@ -2,9 +2,7 @@ package org.throwable.mapper.configuration;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
-import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -25,7 +23,6 @@ import java.util.stream.Stream;
 @Configuration
 @ConditionalOnClass({SqlSessionFactory.class, SqlSessionFactoryBean.class})
 @ConditionalOnBean({DataSource.class, SqlSessionFactory.class})
-@AutoConfigureAfter(MybatisAutoConfiguration.class)
 @EnableConfigurationProperties({SmartMapperProperties.class})
 public class MapperAutoConfiguration implements InitializingBean {
 

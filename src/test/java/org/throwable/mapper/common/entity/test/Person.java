@@ -1,4 +1,4 @@
-package org.throwable.mapper.common.entity;
+package org.throwable.mapper.common.entity.test;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

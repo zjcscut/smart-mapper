@@ -4,10 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.throwable.mapper.support.assist.SqlAppendAssistor;
 import org.throwable.mapper.support.plugins.DynamicTableName;
 
-/**
- * @author jearton
- * @since 2016/12/16
- */
+
 @SuppressWarnings("unused")
 public abstract class OGNL {
 

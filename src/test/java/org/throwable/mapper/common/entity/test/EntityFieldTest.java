@@ -1,4 +1,4 @@
-package org.throwable.mapper.common.entity;
+package org.throwable.mapper.common.entity.test;
 
 import org.junit.Test;
 import org.throwable.mapper.utils.ReflectionUtils;

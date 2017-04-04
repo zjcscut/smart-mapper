@@ -1,4 +1,4 @@
-package org.throwable.mapper.common.entity;
+package org.throwable.mapper.common.entity.test;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,7 +22,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @NameStyle(value = NameStyleEnum.CAMELCASE_TO_UNDERLINE_UPPERCASE)
-@Table(name = "TB_AT_USER")
+@Table(name = "User")
 @Entity
 public class User extends Person{
 
@@ -31,7 +31,7 @@ public class User extends Person{
 	@Column(name = "AGE")
 	private Integer age;
 	@Column(name = "BIRTH")
-	@ColumnExtend(column = "BIRTH",typeHandler = TypeHandlerTest.class)
+	@ColumnExtend(column = "BIRTH")
 	private Date birth;
 
 
