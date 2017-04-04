@@ -83,7 +83,8 @@ public class MultipleJdbc3KeyGenerator extends Jdbc3KeyGenerator {
         }
     }
 
-    private Collection<Object> getParameters(Object parameter) {
+    @SuppressWarnings("unchecked")
+	private Collection<Object> getParameters(Object parameter) {
         Collection<Object> parameters = null;
         if (parameter instanceof Collection) {
             parameters = (Collection) parameter;
@@ -98,7 +99,7 @@ public class MultipleJdbc3KeyGenerator extends Jdbc3KeyGenerator {
             }
         }
         if (parameters == null) {
-            parameters = new ArrayList<Object>();
+            parameters = new ArrayList<>();
             parameters.add(parameter);
         }
         return parameters;

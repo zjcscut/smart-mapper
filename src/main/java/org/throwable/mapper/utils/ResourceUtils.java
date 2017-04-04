@@ -2,10 +2,13 @@ package org.throwable.mapper.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.YamlMapFactoryBean;
+import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.boot.env.PropertiesPropertySourceLoader;
 import org.springframework.boot.env.PropertySourceLoader;
 import org.springframework.boot.env.YamlPropertySourceLoader;
 import org.springframework.core.env.PropertySource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.ConcurrentReferenceHashMap;
@@ -13,6 +16,8 @@ import org.springframework.util.ConcurrentReferenceHashMap;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -199,4 +204,24 @@ public final class ResourceUtils {
         }
         return values;
     }
+
+	public static Map<String, Object> yamlToMap(String yamlSource) {
+		try {
+			YamlMapFactoryBean yaml = new YamlMapFactoryBean();
+			yaml.setResources(new ClassPathResource(yamlSource));
+			return yaml.getObject();
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	public static Properties yamlToProperties(String yamlSource) {
+		try {
+			YamlPropertiesFactoryBean yaml = new YamlPropertiesFactoryBean();
+			yaml.setResources(new ClassPathResource(yamlSource));
+			return yaml.getObject();
+		} catch (Exception e) {
+			return null;
+		}
+	}
 }

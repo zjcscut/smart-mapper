@@ -1,5 +1,7 @@
 package org.throwable.mapper.common.constant;
 
+import org.throwable.mapper.exception.UnsupportedElementException;
+
 /**
  * @author throwable
  * @version v1.0
@@ -18,5 +20,15 @@ public enum NameStyleEnum {
 
 	UPPER,
 
-	LOWER
+	LOWER;
+
+	public NameStyleEnum search(String value) {
+		NameStyleEnum[] enums = NameStyleEnum.values();
+		for (NameStyleEnum styleEnum : enums) {
+			if (styleEnum.name().equalsIgnoreCase(value)) {
+				return styleEnum;
+			}
+		}
+		throw new UnsupportedElementException(String.format("没有对应的命名转换类型:%s", value));
+	}
 }

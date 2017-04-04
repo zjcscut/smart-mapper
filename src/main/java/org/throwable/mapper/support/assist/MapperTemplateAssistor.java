@@ -10,6 +10,7 @@ import org.apache.ibatis.builder.annotation.ProviderSqlSource;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.throwable.mapper.configuration.prop.PropertiesConfiguration;
+import org.throwable.mapper.exception.BeanRegisterHandleException;
 import org.throwable.mapper.support.provider.EmptyProvider;
 import org.throwable.mapper.support.repository.AbstractMapperTemplate;
 
@@ -56,6 +57,9 @@ public class MapperTemplateAssistor {
 	}
 
 
+	/**
+	 * 核心方法,注册所有provider中的方法
+	 */
 	private AbstractMapperTemplate registerMapperClassMethod(Class<?> mapperClass) {
 		Method[] methods = mapperClass.getDeclaredMethods();
 		Class<?> templateClass = null;
@@ -82,7 +86,7 @@ public class MapperTemplateAssistor {
 			if (templateClass == null) {
 				templateClass = tempClass;
 			} else if (templateClass != tempClass) {
-				throw new UnsupportedOperationException("一个通用Mapper中只允许存在一个AbstractMapperTemplate子类!");
+				throw new BeanRegisterHandleException("一个Smart-Mapper中只允许存在一个AbstractMapperTemplate子类!");
 			}
 		}
 		if (templateClass == null || !AbstractMapperTemplate.class.isAssignableFrom(templateClass)) {
@@ -92,14 +96,14 @@ public class MapperTemplateAssistor {
 		try {
 			mapperTemplate = (AbstractMapperTemplate) templateClass.getConstructor(Class.class, MapperTemplateAssistor.class).newInstance(mapperClass, this);
 		} catch (Exception e) {
-			throw new UnsupportedOperationException(String.format("实例化AbstractMapperTemplate对象失败:%s",e));
+			throw new BeanRegisterHandleException(String.format("实例化AbstractMapperTemplate对象失败:%s", e));
 		}
 		//注册方法
 		for (String methodName : methodSet) {
 			try {
 				mapperTemplate.addMethodMap(methodName, templateClass.getMethod(methodName, MappedStatement.class));
 			} catch (NoSuchMethodException e) {
-				throw new UnsupportedOperationException(templateClass.getCanonicalName() + "中缺少" + methodName + "方法!");
+				throw new BeanRegisterHandleException(String.format("%s中缺少%s方法!", templateClass.getCanonicalName(), methodName));
 			}
 		}
 		return mapperTemplate;
@@ -113,19 +117,10 @@ public class MapperTemplateAssistor {
 		}
 		//自动注册继承的接口
 		Class<?>[] interfaces = mapperClass.getInterfaces();
-		if (interfaces != null && interfaces.length > 0) {
+		if (null != interfaces && interfaces.length > 0) {
 			for (Class<?> anInterface : interfaces) {
 				registerMapper(anInterface);
 			}
-		}
-	}
-
-
-	public void registerMapper(String mapperClass) {
-		try {
-			registerMapper(Class.forName(mapperClass));
-		} catch (ClassNotFoundException e) {
-			throw new UnsupportedOperationException("注册通用Mapper[" + mapperClass + "]失败，找不到该通用Mapper!");
 		}
 	}
 
@@ -168,23 +163,6 @@ public class MapperTemplateAssistor {
 	}
 
 
-	public void setProperties(Properties properties) {
-		//注册通用接口
-		String mapper = null;
-		if (properties != null) {
-			mapper = properties.getProperty("mappers");
-		}
-		if (StringUtils.isNotEmpty(mapper)) {
-			String[] mappers = mapper.split(",");
-			for (String mapperClass : mappers) {
-				if (mapperClass.length() > 0) {
-					registerMapper(mapperClass);
-				}
-			}
-		}
-	}
-
-
 	public void processConfiguration(Configuration configuration) {
 		processConfiguration(configuration, null);
 	}
@@ -196,15 +174,17 @@ public class MapperTemplateAssistor {
 		} else {
 			prefix = "";
 		}
-		for (Object object : new ArrayList<Object>(configuration.getMappedStatements())) {
-			if (object instanceof MappedStatement) {
-				MappedStatement ms = (MappedStatement) object;
+		//重新设置所有的MappedStatements的SqlSource -> 关键步骤
+		List<Object> msList = new ArrayList<>(configuration.getMappedStatements());
+		msList.forEach(o -> {
+			if (o instanceof MappedStatement) {
+				MappedStatement ms = (MappedStatement) o;
 				if (ms.getId().startsWith(prefix) && isMapperMethod(ms.getId())) {
 					if (ms.getSqlSource() instanceof ProviderSqlSource) {
 						setSqlSource(ms);
 					}
 				}
 			}
-		}
+		});
 	}
 }

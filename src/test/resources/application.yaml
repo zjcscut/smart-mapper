@@ -9,3 +9,5 @@ spring:
 smart-mapper:
   mapper-locations: mappings/*.xml
   type-aliases-package: org.throwable.mapper.common.entity.test
+  base-packages:
+  - org.throwable.mapper.common.entity.test.mapper

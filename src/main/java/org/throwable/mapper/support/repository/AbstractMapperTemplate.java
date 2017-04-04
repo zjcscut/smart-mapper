@@ -15,6 +15,7 @@ import org.apache.ibatis.scripting.xmltags.*;
 import org.apache.ibatis.session.Configuration;
 import org.throwable.mapper.common.entity.EntityColumn;
 import org.throwable.mapper.common.entity.EntityTable;
+import org.throwable.mapper.exception.BeanRegisterHandleException;
 import org.throwable.mapper.support.assist.EntityTableAssisor;
 import org.throwable.mapper.support.assist.MapperTemplateAssistor;
 import org.throwable.mapper.support.assist.SqlAppendAssistor;
@@ -143,7 +144,7 @@ public abstract class AbstractMapperTemplate {
 
 	public void setSqlSource(MappedStatement ms) throws Exception {
 		if (this.mapperClass == getMapperClass(ms.getId())) {
-			throw new UnsupportedOperationException("请不要配置或扫描通用Mapper接口类：" + this.mapperClass);
+			throw new UnsupportedOperationException(String.format("请不要配置或扫描Smart-Mapper接口类:%s",this.mapperClass));
 		}
 		Method method = methodMap.get(getMethodName(ms));
 		try {
@@ -164,14 +165,14 @@ public abstract class AbstractMapperTemplate {
 				//替换原有的SqlSource
 				setSqlSource(ms, sqlSource);
 			} else {
-				throw new RuntimeException("自定义Mapper方法返回类型错误,可选的返回类型为void,SqlNode,String三种!");
+				throw new BeanRegisterHandleException("自定义Mapper方法返回类型错误,可选的返回类型为void,SqlNode,String三种!");
 			}
 			//cache
 			checkCache(ms);
 		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
+			throw new BeanRegisterHandleException(e);
 		} catch (InvocationTargetException e) {
-			throw new RuntimeException(e.getTargetException() != null ? e.getTargetException() : e);
+			throw new BeanRegisterHandleException(e.getTargetException() != null ? e.getTargetException() : e);
 		}
 	}
 
