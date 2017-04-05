@@ -2,6 +2,7 @@ package org.throwable.mapper.support.assist;
 
 import org.throwable.mapper.common.entity.EntityColumn;
 import org.throwable.mapper.exception.UnsupportedElementException;
+import org.throwable.mapper.support.filter.FieldFilter;
 
 import java.util.Optional;
 import java.util.Set;
@@ -46,6 +47,7 @@ public abstract class InsertSqlAppendAssistor extends SqlAppendAssistor {
 				.orElse("");
 	}
 
+
 	/**
 	 * insert into tableName - 动态表名
 	 *
@@ -89,7 +91,7 @@ public abstract class InsertSqlAppendAssistor extends SqlAppendAssistor {
 	 *
 	 * @param entityClass 实体类
 	 */
-	public static String insertColumns(Class<?> entityClass) {
+	public static String insertColumns(Class<?> entityClass, FieldFilter fieldFilter) {
 		Set<EntityColumn> columnList = EntityTableAssisor.getAllColumns(entityClass);
 		StringBuilder sql = new StringBuilder();
 

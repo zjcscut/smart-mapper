@@ -1,5 +1,7 @@
 package org.throwable.mapper.support.filter;
 
+import java.util.List;
+
 /**
  * @author throwable
  * @version v1.0
@@ -10,5 +12,5 @@ public interface FieldFilter {
 
 	boolean isInculdeFilter();
 
-	String[] accept(String fields);
+	List<String> accept();
 }
