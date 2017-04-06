@@ -93,11 +93,7 @@ public abstract class InsertSqlAppendAssistor extends SqlAppendAssistor {
 	 * @param entityClass 实体类
 	 */
 	public static String insertColumns(Class<?> entityClass, FieldFilter fieldFilter, boolean skipPrimaryKey) {
-		Set<EntityColumn> columnList = skipPrimaryKey ? EntityTableAssisor.getNonePrimaryColumns(entityClass)
-				: EntityTableAssisor.getAllColumns(entityClass);
-		if (null != fieldFilter) {
-			columnList = filter(columnList, fieldFilter);
-		}
+		Set<EntityColumn> columnList = getFilterColumns(entityClass, fieldFilter, skipPrimaryKey);
 		StringBuilder sql = new StringBuilder();
 		sql.append("<trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">");
 		for (EntityColumn column : columnList) {
@@ -115,10 +111,9 @@ public abstract class InsertSqlAppendAssistor extends SqlAppendAssistor {
 		return sql.toString();
 	}
 
-	public static String insertValues(Class<?> entityClass) {
-		Set<EntityColumn> columnList = EntityTableAssisor.getAllColumns(entityClass);
+	public static String insertValues(Class<?> entityClass,FieldFilter fieldFilter, boolean skipPrimaryKey) {
+		Set<EntityColumn> columnList = getFilterColumns(entityClass, fieldFilter, skipPrimaryKey);
 		StringBuilder sql = new StringBuilder();
-
 		sql.append("<trim prefix=\"VALUES(\" suffix=\")\" suffixOverrides=\",\">");
 		for (EntityColumn column : columnList) {
 			if (!column.isInsertable()) {

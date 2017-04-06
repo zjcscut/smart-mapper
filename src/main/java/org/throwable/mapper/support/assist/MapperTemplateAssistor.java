@@ -155,7 +155,7 @@ public class MapperTemplateAssistor {
 		AbstractMapperTemplate mapperTemplate = msIdCache.get(ms.getId());
 		try {
 			if (mapperTemplate != null) {
-				mapperTemplate.setSqlSource(ms);
+				mapperTemplate.rewriteSqlSource(ms);
 			}
 		} catch (Exception e) {
 			throw new UnsupportedOperationException(e);

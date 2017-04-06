@@ -36,4 +36,13 @@ public abstract class FieldFilterAssistor {
 					.collect(Collectors.toSet());
 		}
 	}
+
+	protected static Set<EntityColumn> getFilterColumns(Class<?> entityClass,FieldFilter fieldFilter,boolean skipPrimaryKey){
+		Set<EntityColumn> columnList = skipPrimaryKey ? EntityTableAssisor.getNonePrimaryColumns(entityClass)
+				: EntityTableAssisor.getAllColumns(entityClass);
+		if (null != fieldFilter) {
+			columnList = filter(columnList, fieldFilter);
+		}
+		return columnList;
+	}
 }

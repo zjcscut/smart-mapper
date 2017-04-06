@@ -63,7 +63,7 @@ public abstract class AbstractMapperTemplate {
 		try {
 			return Class.forName(mapperClassStr);
 		} catch (ClassNotFoundException e) {
-			throw new UnsupportedOperationException(String.format("实例化mapper类失败,className:%s",mapperClassStr));
+			throw new UnsupportedOperationException(String.format("实例化mapper类失败,className:%s", mapperClassStr));
 		}
 	}
 
@@ -113,7 +113,10 @@ public abstract class AbstractMapperTemplate {
 		return false;
 	}
 
-	protected void setSqlSource(MappedStatement ms, SqlSource sqlSource) {
+	/**
+	 * 重写ms的sqlSource
+	 */
+	protected void rewriteSqlSource(MappedStatement ms, SqlSource sqlSource) {
 		MetaObject msObject = SystemMetaObject.forObject(ms);
 		msObject.setValue("sqlSource", sqlSource);
 		//如果是Jdbc3KeyGenerator，就设置为MultipleJdbc3KeyGenerator
@@ -124,6 +127,9 @@ public abstract class AbstractMapperTemplate {
 	}
 
 
+	/**
+	 * 检查缓存
+	 */
 	private void checkCache(MappedStatement ms) throws Exception {
 		if (ms.getCache() == null) {
 			String nameSpace = ms.getId().substring(0, ms.getId().lastIndexOf("."));
@@ -142,9 +148,9 @@ public abstract class AbstractMapperTemplate {
 	}
 
 
-	public void setSqlSource(MappedStatement ms) throws Exception {
+	public void rewriteSqlSource(MappedStatement ms) throws Exception {
 		if (this.mapperClass == getMapperClass(ms.getId())) {
-			throw new UnsupportedOperationException(String.format("请不要配置或扫描Smart-Mapper接口类:%s",this.mapperClass));
+			throw new UnsupportedOperationException(String.format("请不要配置或扫描Smart-Mapper接口类:%s", this.mapperClass));
 		}
 		Method method = methodMap.get(getMethodName(ms));
 		try {
@@ -156,14 +162,14 @@ public abstract class AbstractMapperTemplate {
 			else if (SqlNode.class.isAssignableFrom(method.getReturnType())) {
 				SqlNode sqlNode = (SqlNode) method.invoke(this, ms);
 				DynamicSqlSource dynamicSqlSource = new DynamicSqlSource(ms.getConfiguration(), sqlNode);
-				setSqlSource(ms, dynamicSqlSource);
+				rewriteSqlSource(ms, dynamicSqlSource);
 			}
 			//第三种，返回xml形式的sql字符串
 			else if (String.class.equals(method.getReturnType())) {
 				String xmlSql = (String) method.invoke(this, ms);
-				SqlSource sqlSource = createSqlSource(ms, xmlSql);
+				SqlSource sqlSource = createXmlSqlSource(ms, xmlSql);
 				//替换原有的SqlSource
-				setSqlSource(ms, sqlSource);
+				rewriteSqlSource(ms, sqlSource);
 			} else {
 				throw new BeanRegisterHandleException("自定义Mapper方法返回类型错误,可选的返回类型为void,SqlNode,String三种!");
 			}
@@ -183,7 +189,7 @@ public abstract class AbstractMapperTemplate {
 	 * @param xmlSql
 	 * @return
 	 */
-	public SqlSource createSqlSource(MappedStatement ms, String xmlSql) {
+	public SqlSource createXmlSqlSource(MappedStatement ms, String xmlSql) {
 		return languageDriver.createSqlSource(ms.getConfiguration(), "<script>\n\t" + xmlSql + "</script>", null);
 	}
 
@@ -200,9 +206,6 @@ public abstract class AbstractMapperTemplate {
 
 	/**
 	 * 获取实体类的表名
-	 *
-	 * @param entityClass
-	 * @return
 	 */
 	protected String tableName(Class<?> entityClass) {
 		EntityTable entityTable = EntityTableAssisor.getEntityTable(entityClass);
@@ -217,6 +220,9 @@ public abstract class AbstractMapperTemplate {
 		return entityTable.getName();
 	}
 
+	/**
+	 * 新建写回主键策略
+	 */
 	protected void newSelectKeyMappedStatement(MappedStatement ms, EntityColumn column) {
 		Configuration config = ms.getConfiguration();
 		String keyId = ms.getId() + SELECT_KEY_SUFFIX;
@@ -324,7 +330,7 @@ public abstract class AbstractMapperTemplate {
 						entityClassMap.put(msId, returnType);
 						return returnType;
 					})
-					.orElseThrow(() -> new UnsupportedOperationException("无法获取Mapper<T>泛型类型:" + msId));
+					.orElseThrow(() -> new UnsupportedOperationException(String.format("无法获取Mapper<T>泛型类型:%s" ,msId)));
 		}
 	}
 
@@ -357,7 +363,7 @@ public abstract class AbstractMapperTemplate {
 	 */
 	public static String getMapperName(String msId) {
 		if (!msId.contains(".")) {
-			throw new UnsupportedOperationException("当前MappedStatement的id=" + msId + ",不符合MappedStatement的规则!");
+			throw new UnsupportedOperationException(String.format("当前MappedStatement的id=%s,不符合MappedStatement的规则!)", msId));
 		}
 		return msId.substring(0, msId.lastIndexOf("."));
 	}

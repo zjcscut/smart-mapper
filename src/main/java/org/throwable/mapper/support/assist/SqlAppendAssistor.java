@@ -28,7 +28,7 @@ import static org.throwable.mapper.utils.OGNL.*;
  * @since 2017/4/4 0:07
  */
 @Slf4j
-public  abstract class SqlAppendAssistor  extends FieldFilterAssistor{
+public abstract class SqlAppendAssistor  extends FieldFilterAssistor{
 
 	public static String checkDefaultParamValue() {
 		return checkParamValue(PARAM_DEFAULT);
@@ -162,7 +162,7 @@ public  abstract class SqlAppendAssistor  extends FieldFilterAssistor{
 	 * 返回格式：columnName = #{parameterName/[parameterName.]property,jdbcType=NUMERIC,typeHandler=MyTypeHandler}
 	 */
 	static String getColumnEqualsHolder(String parameterName, EntityColumn column, boolean addProperty) {
-		return column.getColumn() + " = " + _getColumnHolder(parameterName, column, addProperty, "");
+		return column.getColumn() + " = " + getColumnHolder(parameterName, column, addProperty, "");
 	}
 
 	/**
@@ -179,7 +179,7 @@ public  abstract class SqlAppendAssistor  extends FieldFilterAssistor{
 	 * @param column        数据库列
 	 */
 	static String getColumnHolderWithComma(String parameterName, EntityColumn column) {
-		return _getColumnHolder(parameterName, column, ",");
+		return getColumnHolder(parameterName, column, ",");
 	}
 
 	/**
@@ -198,14 +198,14 @@ public  abstract class SqlAppendAssistor  extends FieldFilterAssistor{
 	 * @param column        数据库列
 	 */
 	static String getColumnHolder(String parameterName, EntityColumn column) {
-		return _getColumnHolder(parameterName, column, "");
+		return getColumnHolder(parameterName, column, "");
 	}
 
 	/**
 	 * 返回格式如：#{[parameterName.]property,jdbcType=NUMERIC,typeHandler=MyTypeHandler}+separator
 	 */
-	private static String _getColumnHolder(String parameterName, EntityColumn column, String separator) {
-		return _getColumnHolder(parameterName, column, true, separator);
+	private static String getColumnHolder(String parameterName, EntityColumn column, String separator) {
+		return getColumnHolder(parameterName, column, true, separator);
 	}
 
 	/**
@@ -216,7 +216,7 @@ public  abstract class SqlAppendAssistor  extends FieldFilterAssistor{
 	 * @param addProperty   是否加 .property
 	 * @param separator     末尾分隔符
 	 */
-	private static String _getColumnHolder(String parameterName, EntityColumn column, boolean addProperty, String separator) {
+	private static String getColumnHolder(String parameterName, EntityColumn column, boolean addProperty, String separator) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("#{");
 		if (addProperty) {

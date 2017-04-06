@@ -40,6 +40,7 @@ public class TestMapper {
 	@Test
 	public void Test2() throws Exception {
 		User user = new User();
+		user.setId(100L);
 		user.setAge(25);
 		user.setName("pp");
 		user.setBirth(new Date());
