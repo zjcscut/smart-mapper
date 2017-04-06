@@ -5,7 +5,8 @@ import org.throwable.mapper.common.constant.NameStyleEnum;
 import org.throwable.mapper.support.handler.NameStyleHandler;
 import org.throwable.mapper.support.handler.impl.*;
 
-import java.util.EnumMap;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * @author throwable
@@ -15,7 +16,7 @@ import java.util.EnumMap;
  */
 public final class NameStyleHandlerFactory {
 
-	private static final EnumMap<NameStyleEnum, NameStyleHandler> handlers = Maps.newEnumMap(NameStyleEnum.class);
+	private static final Map<NameStyleEnum, NameStyleHandler> handlers = Maps.newEnumMap(NameStyleEnum.class);
 
 	private static final NameStyleHandlerFactory factory = new NameStyleHandlerFactory();
 
@@ -38,5 +39,9 @@ public final class NameStyleHandlerFactory {
 
 	public NameStyleHandler create(NameStyleEnum styleEnum) {
 		return handlers.get(styleEnum);
+	}
+
+	public Map<NameStyleEnum, NameStyleHandler> getHandlers() {
+		return Collections.unmodifiableMap(handlers);
 	}
 }

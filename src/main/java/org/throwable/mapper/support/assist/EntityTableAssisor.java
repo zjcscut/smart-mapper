@@ -21,6 +21,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author throwable
@@ -59,12 +60,21 @@ public class EntityTableAssisor extends EntityInfoRepository {
 		return getEntityTable(entityClass).getEntityClassColumns();
 	}
 
+	public static Set<EntityColumn> getNonePrimaryColumns(Class<?> entityClass) {
+		Set<EntityColumn> allColumns = getAllColumns(entityClass);
+		Set<EntityColumn> pkColumns = getPrimaryColumns(entityClass);
+		if (!allColumns.isEmpty() && !pkColumns.isEmpty()) {
+			return allColumns.stream().filter(a -> !pkColumns.contains(a)).collect(Collectors.toSet());
+		}
+		return allColumns;
+	}
+
 	public static Set<EntityColumn> getPrimaryColumns(Class<?> entityClass) {
 		return getEntityTable(entityClass).getEntityClassPKColumns();
 	}
 
 	public static EntityColumn getPrimaryColumn(Class<?> entityClass) {
-		Set<EntityColumn> columns = getEntityTable(entityClass).getEntityClassPKColumns();
+		Set<EntityColumn> columns = getPrimaryColumns(entityClass);
 		if (columns.size() == 1) {
 			return columns.iterator().next();
 		} else {
@@ -176,6 +186,7 @@ public class EntityTableAssisor extends EntityInfoRepository {
 				entityColumn.setTypeHandler(columnType.typeHandler());
 			}
 		}
+		entityColumn.setNameStyle(style);
 		//ColumnName
 		if (StringUtils.isEmpty(columnName)) {
 			columnName = NameStyleContext.convert(style, field.getName());

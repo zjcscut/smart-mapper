@@ -18,8 +18,9 @@ import static org.throwable.mapper.common.constant.CommonConstants.PARAM_DEFAULT
  */
 public abstract class InsertSqlAppendAssistor extends SqlAppendAssistor {
 
+
 	public static Optional<EntityColumn> getIdentityColumn(final Class<?> entityClass) {
-		Set<EntityColumn> columnList = EntityTableAssisor.getAllColumns(entityClass).stream()
+		Set<EntityColumn> columnList = EntityTableAssisor.getPrimaryColumns(entityClass).stream()
 				.filter(EntityColumn::isInsertable)
 				.filter(EntityColumn::isIdentity)
 				.collect(toSet());
@@ -91,10 +92,13 @@ public abstract class InsertSqlAppendAssistor extends SqlAppendAssistor {
 	 *
 	 * @param entityClass 实体类
 	 */
-	public static String insertColumns(Class<?> entityClass, FieldFilter fieldFilter) {
-		Set<EntityColumn> columnList = EntityTableAssisor.getAllColumns(entityClass);
+	public static String insertColumns(Class<?> entityClass, FieldFilter fieldFilter, boolean skipPrimaryKey) {
+		Set<EntityColumn> columnList = skipPrimaryKey ? EntityTableAssisor.getNonePrimaryColumns(entityClass)
+				: EntityTableAssisor.getAllColumns(entityClass);
+		if (null != fieldFilter) {
+			columnList = filter(columnList, fieldFilter);
+		}
 		StringBuilder sql = new StringBuilder();
-
 		sql.append("<trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">");
 		for (EntityColumn column : columnList) {
 			if (!column.isInsertable()) {

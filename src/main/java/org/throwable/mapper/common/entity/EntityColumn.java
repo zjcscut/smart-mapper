@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.throwable.mapper.common.constant.CommonConstants;
+import org.throwable.mapper.common.constant.NameStyleEnum;
 
 /**
  * @author throwable
@@ -35,6 +36,8 @@ public class EntityColumn {
 	private String orderBy;
 	private boolean insertable = true;
 	private boolean updatable = true;
+
+	private NameStyleEnum nameStyle;
 
 	public EntityColumn(EntityTable table) {
 		this.table = table;

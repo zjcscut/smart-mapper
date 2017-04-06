@@ -151,7 +151,7 @@ public class MapperTemplateAssistor {
 	}
 
 
-	public void setSqlSource(MappedStatement ms) {
+	public void rewriteSqlSource(MappedStatement ms) {
 		AbstractMapperTemplate mapperTemplate = msIdCache.get(ms.getId());
 		try {
 			if (mapperTemplate != null) {
@@ -181,7 +181,7 @@ public class MapperTemplateAssistor {
 				MappedStatement ms = (MappedStatement) o;
 				if (ms.getId().startsWith(prefix) && isMapperMethod(ms.getId())) {
 					if (ms.getSqlSource() instanceof ProviderSqlSource) {
-						setSqlSource(ms);
+						rewriteSqlSource(ms);
 					}
 				}
 			}

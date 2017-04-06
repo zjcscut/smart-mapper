@@ -28,7 +28,7 @@ import static org.throwable.mapper.utils.OGNL.*;
  * @since 2017/4/4 0:07
  */
 @Slf4j
-public  abstract class SqlAppendAssistor {
+public  abstract class SqlAppendAssistor  extends FieldFilterAssistor{
 
 	public static String checkDefaultParamValue() {
 		return checkParamValue(PARAM_DEFAULT);

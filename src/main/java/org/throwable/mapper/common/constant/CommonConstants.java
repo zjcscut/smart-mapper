@@ -26,4 +26,8 @@ public interface CommonConstants {
 
 	String GENERATED_JDBC = "JDBC";
 
+	String FIELD_FILTER = "fieldFilter";
+
+	String SKIP_PRIMARYKEY = "skipPrimaryKey";
+
 }

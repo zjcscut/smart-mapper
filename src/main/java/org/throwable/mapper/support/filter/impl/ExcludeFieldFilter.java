@@ -1,10 +1,10 @@
 package org.throwable.mapper.support.filter.impl;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.throwable.mapper.common.constant.CommonConstants;
 import org.throwable.mapper.support.filter.FieldFilter;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author throwable
@@ -26,7 +26,7 @@ public class ExcludeFieldFilter implements FieldFilter {
 	}
 
 	@Override
-	public List<String> accept() {
-		return Lists.newArrayList(fields.split(CommonConstants.COMMA));
+	public Set<String> accept() {
+		return Sets.newHashSet(fields.split(CommonConstants.COMMA));
 	}
 }

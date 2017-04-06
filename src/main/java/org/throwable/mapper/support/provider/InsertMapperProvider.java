@@ -28,7 +28,7 @@ public class InsertMapperProvider extends AbstractMapperTemplate {
 		StringBuilder builder = new StringBuilder(checkDefaultParamValue());
 		builder.append(insertUniqueId(entityClass, getUUID()));
 		builder.append(insertIntoTable(entityClass, tableName(entityClass)));
-		builder.append(insertColumns(entityClass));
+		builder.append(insertColumns(entityClass,null,true));
 		builder.append(insertValues(entityClass));
 		return builder.toString();
 	}
