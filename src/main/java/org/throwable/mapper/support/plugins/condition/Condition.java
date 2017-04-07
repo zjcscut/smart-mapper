@@ -14,7 +14,7 @@ import org.throwable.mapper.support.plugins.sort.Sort;
 public class Condition {
 
 	@Getter
-	private final Sort sort;
+	public final Sort sort;
 
 	private Condition() {
 		sort = new Sort();

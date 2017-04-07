@@ -9,15 +9,18 @@ import org.apache.ibatis.scripting.xmltags.IfSqlNode;
 import org.apache.ibatis.scripting.xmltags.SqlNode;
 import org.apache.ibatis.scripting.xmltags.TextSqlNode;
 import org.throwable.mapper.common.entity.EntityColumn;
+import org.throwable.mapper.exception.UnsupportedElementException;
 import org.throwable.mapper.support.plugins.DynamicTableName;
 
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
+import static java.util.stream.Collectors.toSet;
 import static org.throwable.mapper.common.constant.CommonConstants.PARAM_DEFAULT;
 import static org.throwable.mapper.utils.OGNL.*;
 
@@ -30,11 +33,25 @@ import static org.throwable.mapper.utils.OGNL.*;
 @Slf4j
 public abstract class SqlAppendAssistor  extends FieldFilterAssistor{
 
-	public static String checkDefaultParamValue() {
+	protected static Optional<EntityColumn> getIdentityColumn(final Class<?> entityClass) {
+		Set<EntityColumn> columnList = EntityTableAssisor.getPrimaryColumns(entityClass).stream()
+				.filter(EntityColumn::isInsertable)
+				.filter(EntityColumn::isIdentity)
+				.collect(toSet());
+		if (columnList.size() == 0) {
+			return Optional.empty();
+		}
+		if (columnList.size() > 1) {
+			throw new UnsupportedElementException("Too many identity columns defined in " + entityClass.getCanonicalName());
+		}
+		return Optional.of(columnList.iterator().next());
+	}
+
+	protected static String checkDefaultParamValue() {
 		return checkParamValue(PARAM_DEFAULT);
 	}
 
-	public static String checkParamValue(String... parameterNames) {
+	protected static String checkParamValue(String... parameterNames) {
 		if (parameterNames.length == 1) {
 			String exp = format(CHECK_FOR_NULL, parameterNames[0], "'parameter must not be null'");
 			return "<if test=\"" + exp + "\"/>\n";

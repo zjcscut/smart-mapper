@@ -18,21 +18,6 @@ import static org.throwable.mapper.common.constant.CommonConstants.PARAM_DEFAULT
  */
 public abstract class InsertSqlAppendAssistor extends SqlAppendAssistor {
 
-
-	public static Optional<EntityColumn> getIdentityColumn(final Class<?> entityClass) {
-		Set<EntityColumn> columnList = EntityTableAssisor.getPrimaryColumns(entityClass).stream()
-				.filter(EntityColumn::isInsertable)
-				.filter(EntityColumn::isIdentity)
-				.collect(toSet());
-		if (columnList.size() == 0) {
-			return Optional.empty();
-		}
-		if (columnList.size() > 1) {
-			throw new UnsupportedElementException("Too many identity columns defined in " + entityClass.getCanonicalName());
-		}
-		return Optional.of(columnList.iterator().next());
-	}
-
 	/**
 	 * 获取预设UUID的动态SQL代码
 	 *

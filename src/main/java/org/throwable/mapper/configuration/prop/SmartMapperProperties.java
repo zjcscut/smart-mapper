@@ -73,28 +73,6 @@ public class SmartMapperProperties {
 	 */
 	private Properties configurationProperties;
 
-	/**
-	 * A Configuration object for customize default settings. If {@link #configLocation}
-	 * is specified, this property is not used.
-	 */
-	@NestedConfigurationProperty
-	private Configuration configuration;
-
-	public Resource[] resolveMapperLocations() {
-		ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
-		List<Resource> resources = new ArrayList<>();
-		if (null != this.mapperLocations) {
-			for (String mapperLocation : this.mapperLocations) {
-				try {
-					Resource[] mappers = resourceResolver.getResources(mapperLocation);
-					resources.addAll(Arrays.asList(mappers));
-				} catch (IOException e) {
-					// ignore
-				}
-			}
-		}
-		return resources.toArray(new Resource[resources.size()]);
-	}
 
 	/**
 	 * 需要扫描的mapper所在的包
@@ -114,6 +92,10 @@ public class SmartMapperProperties {
 	@NotNull
 	private Class<? extends MapperFactoryBean> factoryBean = MapperFactoryBean.class;
 
+	/**
+	 *
+	 * Environment对象有个BUG,无法获取Yaml文件的列表类型数据,因此需要使用Properties下标获取
+	 */
 	@SuppressWarnings("unchecked")
 	public SmartMapperProperties(Environment env) {
 		String packagesKey = "smart-mapper.base-packages";
@@ -150,6 +132,32 @@ public class SmartMapperProperties {
 		}
 	}
 
+	/**
+	 * A Configuration object for customize default settings. If {@link #configLocation}
+	 * is specified, this property is not used.
+	 */
+	@NestedConfigurationProperty
+	private Configuration configuration;
+
+	public Resource[] resolveMapperLocations() {
+		ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
+		List<Resource> resources = new ArrayList<>();
+		if (null != this.mapperLocations) {
+			for (String mapperLocation : this.mapperLocations) {
+				try {
+					Resource[] mappers = resourceResolver.getResources(mapperLocation);
+					resources.addAll(Arrays.asList(mappers));
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+		}
+		return resources.toArray(new Resource[resources.size()]);
+	}
+
+	/**
+	 * 封装smart-mapper内部配置
+	 */
 	public PropertiesConfiguration createConfiguration() {
 
 		return new PropertiesConfiguration();

@@ -1,6 +1,13 @@
 package org.throwable.mapper;
 
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.SelectProvider;
+import org.throwable.mapper.support.plugins.condition.Condition;
+import org.throwable.mapper.support.provider.SelectMapperProvider;
+
 import java.util.List;
+
+import static org.throwable.mapper.common.constant.CommonConstants.PARAM_CONDITION;
 
 /**
  * @author throwable
@@ -8,10 +15,12 @@ import java.util.List;
  * @description
  * @since 2017/4/3 23:59
  */
-public interface SelectMapper <T>{
+public interface SelectMapper<T> {
 
-	List<T> selectCondition();
+    @SelectProvider(type = SelectMapperProvider.class, method = "dynamicSQL")
+    List<T> selectCondition(@Param(PARAM_CONDITION) Condition condition);
 
-	long countCondition();
+    @SelectProvider(type = SelectMapperProvider.class, method = "dynamicSQL")
+    long countCondition(@Param(PARAM_CONDITION) Condition condition);
 
 }
