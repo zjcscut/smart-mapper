@@ -22,7 +22,7 @@ public class Person {
 	@Column(name = "SEX")
 	private String sex;
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
 	@Column(name = "ID")
 	private Long id;
 }

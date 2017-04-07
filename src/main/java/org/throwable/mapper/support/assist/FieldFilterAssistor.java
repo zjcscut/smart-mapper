@@ -21,7 +21,7 @@ public abstract class FieldFilterAssistor {
 		if (null == entityColumns || entityColumns.size() == 0){
 			return Sets.newHashSet();
 		}
-		NameStyleEnum style = entityColumns.iterator().next().getNameStyle();
+		NameStyleEnum style = entityColumns.iterator().next().getTable().getNameStyle();
 		Set<String> filterFields = Sets.newHashSet();
 		for (String input : fieldFilter.accept()) {
 			filterFields.add(NameStyleContext.convert(style, input));

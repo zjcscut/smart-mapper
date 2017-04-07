@@ -111,7 +111,7 @@ public abstract class InsertSqlAppendAssistor extends SqlAppendAssistor {
 		return sql.toString();
 	}
 
-	public static String insertValues(Class<?> entityClass,FieldFilter fieldFilter, boolean skipPrimaryKey) {
+	public static String insertValues(Class<?> entityClass, FieldFilter fieldFilter, boolean skipPrimaryKey) {
 		Set<EntityColumn> columnList = getFilterColumns(entityClass, fieldFilter, skipPrimaryKey);
 		StringBuilder sql = new StringBuilder();
 		sql.append("<trim prefix=\"VALUES(\" suffix=\")\" suffixOverrides=\",\">");
@@ -132,30 +132,24 @@ public abstract class InsertSqlAppendAssistor extends SqlAppendAssistor {
 	}
 
 	public static String insertBatchColumns(Class<?> entityClass) {
-		Set<EntityColumn> columnList = EntityTableAssisor.getAllColumns(entityClass);
+		Set<EntityColumn> columnList = EntityTableAssisor.getNonePrimaryColumns(entityClass);
 		StringBuilder sql = new StringBuilder();
-
 		sql.append("<trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">");
-		columnList.stream()
-				.filter(column -> column.isInsertable() && !column.isIdentity())
-				.forEach(column -> sql.append(column.getColumn()).append(","));
+		columnList.forEach(column -> sql.append(column.getColumn()).append(","));
 		sql.append("</trim>");
 		return sql.toString();
 	}
 
 	public static String insertBatchValues(final Class<?> entityClass, final String uniqueIdExpression) {
-		Set<EntityColumn> columnList = EntityTableAssisor.getAllColumns(entityClass);
+		Set<EntityColumn> columnList = EntityTableAssisor.getNonePrimaryColumns(entityClass);
 		StringBuilder sql = new StringBuilder();
-
 		sql.append(" VALUES ");
 		sql.append("<foreach collection=\"list\" item=\"record\" separator=\",\" >");
 		columnList.stream()
 				.filter(column -> column.isInsertable() && column.isUUID())
 				.forEach(column -> sql.append(_getUniqueIdSeg(column, "record", uniqueIdExpression)));
 		sql.append("<trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">");
-		columnList.stream()
-				.filter(column -> column.isInsertable() && !column.isIdentity())
-				.forEach(column -> sql.append(column.getColumnHolder("record")).append(","));
+		columnList.forEach(column -> sql.append(column.getColumnHolder("record")).append(","));
 		sql.append("</trim>");
 		sql.append("</foreach>");
 		return sql.toString();

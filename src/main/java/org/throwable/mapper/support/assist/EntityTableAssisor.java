@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
  */
 public class EntityTableAssisor extends EntityInfoRepository {
 
-
 	public static EntityTable getEntityTable(Class<?> entityClass) {
 		EntityTable entityTable = entityTableMap.get(entityClass);
 		Assert.notNull(entityTable, String.format("无法获取实体->表映射,实体名:%s", entityClass.getCanonicalName()));
@@ -61,12 +60,9 @@ public class EntityTableAssisor extends EntityInfoRepository {
 	}
 
 	public static Set<EntityColumn> getNonePrimaryColumns(Class<?> entityClass) {
-		Set<EntityColumn> allColumns = getAllColumns(entityClass);
-		Set<EntityColumn> pkColumns = getPrimaryColumns(entityClass);
-		if (!allColumns.isEmpty() && !pkColumns.isEmpty()) {
-			return allColumns.stream().filter(a -> !pkColumns.contains(a)).collect(Collectors.toSet());
-		}
-		return allColumns;
+		return getAllColumns(entityClass).stream()
+				.filter(a -> !a.isIdentity() && a.isInsertable())
+				.collect(Collectors.toSet());
 	}
 
 	public static Set<EntityColumn> getPrimaryColumns(Class<?> entityClass) {
@@ -133,6 +129,7 @@ public class EntityTableAssisor extends EntityInfoRepository {
 			//可以通过stye控制
 			entityTable.setName(NameStyleContext.convert(style, entityClass.getSimpleName()));
 		}
+		entityTable.setNameStyle(style);
 		entityTable.setEntityClassColumns(new LinkedHashSet<>());
 		entityTable.setEntityClassPKColumns(new LinkedHashSet<>());
 		//处理所有列
@@ -186,7 +183,6 @@ public class EntityTableAssisor extends EntityInfoRepository {
 				entityColumn.setTypeHandler(columnType.typeHandler());
 			}
 		}
-		entityColumn.setNameStyle(style);
 		//ColumnName
 		if (StringUtils.isEmpty(columnName)) {
 			columnName = NameStyleContext.convert(style, field.getName());
@@ -221,25 +217,23 @@ public class EntityTableAssisor extends EntityInfoRepository {
 			} else {
 				//config sql to fetch database last id,such as: mysql=CALL IDENTITY(),hsqldb=SELECT SCOPE_IDENTITY()
 				//允许通过拦截器参数设置公共的generator
-				if (generatedValue.strategy() == GenerationType.IDENTITY) {
+				if (generatedValue.strategy() == GenerationType.IDENTITY && !generatedValue.generator().equals("")) {
 					//mysql的自动增长
 					entityColumn.setIdentity(true);
-					if (!generatedValue.generator().equals("")) {
-						String generator;
-						IdentityDialectEnum identityDialect = IdentityDialectEnum.getDatabaseIdentityDialect(generatedValue.generator());
-						if (identityDialect != null) {
-							generator = identityDialect.getIdentityRetrievalStatement();
-						} else {
-							generator = generatedValue.generator();
-						}
-						entityColumn.setGenerator(generator);
+					String generator;
+					IdentityDialectEnum identityDialect = IdentityDialectEnum.getDatabaseIdentityDialect(generatedValue.generator());
+					if (identityDialect != null) {
+						generator = identityDialect.getIdentityRetrievalStatement();
+					} else {
+						generator = generatedValue.generator();
 					}
+					entityColumn.setGenerator(generator);
 				} else {
 					throw new BeanReflectionException(field.getName()
 							+ " - 该字段@GeneratedValue配置只允许以下几种形式:" +
 							"\n1.全部数据库通用的@GeneratedValue(generator=\"UUID\")" +
 							"\n2.useGeneratedKeys的@GeneratedValue(generator=\\\"JDBC\\\")  " +
-							"\n3.类似mysql数据库的@GeneratedValue(strategy=GenerationType.IDENTITY[,generator=\"Mysql\"])");
+							"\n3.类似mysql数据库的@GeneratedValue(strategy=GenerationType.IDENTITY,generator=\"Mysql\")");
 				}
 			}
 		}

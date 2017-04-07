@@ -37,8 +37,6 @@ public class EntityColumn {
 	private boolean insertable = true;
 	private boolean updatable = true;
 
-	private NameStyleEnum nameStyle;
-
 	public EntityColumn(EntityTable table) {
 		this.table = table;
 	}

@@ -13,4 +13,5 @@ public interface SelectMapper <T>{
 	List<T> selectCondition();
 
 	long countCondition();
+
 }

@@ -11,7 +11,9 @@ import org.throwable.mapper.common.entity.test.mapper.UserMapper;
 import org.throwable.mapper.configuration.MybatisAutoConfiguration;
 import org.throwable.mapper.support.context.BeanRegisterHandler;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -40,13 +42,32 @@ public class TestMapper {
 	@Test
 	public void Test2() throws Exception {
 		User user = new User();
-		user.setId(100L);
 		user.setAge(25);
 		user.setName("pp");
 		user.setBirth(new Date());
 		user.setSex("MAN");
 		userMapper.insert(user);
 		assertNotNull(user);
-		assertEquals(3L, user.getId().longValue());
+		System.out.println(user.getId());
+	}
+
+	@Test
+	public void Test3()throws Exception{
+		List<User> users = new ArrayList<>();
+		User user1 = new User();
+		user1.setAge(25);
+		user1.setName("ppzzzzz");
+		user1.setBirth(new Date());
+		user1.setSex("MAN");
+        users.add(user1);
+		User user2 = new User();
+		user2.setAge(256);
+		user2.setName("ppzzzzssdaz");
+		user2.setBirth(new Date());
+		user2.setSex("MAN");
+		users.add(user2);
+		userMapper.batchInsert(users);
+		System.out.println(user1.getId());
+		System.out.println(user2.getId());
 	}
 }

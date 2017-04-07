@@ -7,6 +7,7 @@ import org.apache.ibatis.mapping.ResultFlag;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.session.Configuration;
+import org.throwable.mapper.common.constant.NameStyleEnum;
 
 import javax.persistence.Table;
 import java.util.*;
@@ -40,6 +41,8 @@ public class EntityTable {
 	protected Map<String, EntityColumn> propertyMap;
 	//类
 	private Class<?> entityClass;
+
+	private NameStyleEnum nameStyle;
 
 	public EntityTable(Class<?> entityClass) {
 		this.entityClass = entityClass;

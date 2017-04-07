@@ -3,6 +3,8 @@ package org.throwable.mapper;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.throwable.mapper.support.provider.InsertMapperProvider;
 
+import java.util.List;
+
 
 /**
  * @author throwable
@@ -18,5 +20,12 @@ public interface InsertMapper<T> {
 	@InsertProvider(type = InsertMapperProvider.class, method = "dynamicSQL")
 	int insertNoneSkipPrimaryKey(T t);
 
+	@InsertProvider(type = InsertMapperProvider.class, method = "dynamicSQL")
+	int insertIngore(T t);
 
+	@InsertProvider(type = InsertMapperProvider.class, method = "dynamicSQL")
+	int batchInsert(List<T> t);
+
+	@InsertProvider(type = InsertMapperProvider.class, method = "dynamicSQL")
+	int batchInsertIgnore(List<T> t);
 }

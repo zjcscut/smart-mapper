@@ -20,7 +20,7 @@ public class InsertMapperProvider extends AbstractMapperTemplate {
 		super(mapperClass, mapperTemplateAssistor);
 	}
 
-	public String insert(MappedStatement ms){
+	public String insert(MappedStatement ms) {
 		val entityClass = getEntityClass(ms);
 		//主键回写
 		getIdentityColumn(entityClass).ifPresent(column -> newSelectKeyMappedStatement(ms, column));
@@ -28,8 +28,8 @@ public class InsertMapperProvider extends AbstractMapperTemplate {
 		StringBuilder builder = new StringBuilder(checkDefaultParamValue());
 		builder.append(insertUniqueId(entityClass, getUUID()));
 		builder.append(insertIntoTable(entityClass, tableName(entityClass)));
-		builder.append(insertColumns(entityClass,null,true));
-		builder.append(insertValues(entityClass,null,true));
+		builder.append(insertColumns(entityClass, null, true));
+		builder.append(insertValues(entityClass, null, true));
 		return builder.toString();
 	}
 
@@ -41,8 +41,48 @@ public class InsertMapperProvider extends AbstractMapperTemplate {
 		StringBuilder builder = new StringBuilder(checkDefaultParamValue());
 		builder.append(insertUniqueId(entityClass, getUUID()));
 		builder.append(insertIntoTable(entityClass, tableName(entityClass)));
-		builder.append(insertColumns(entityClass,null,false));
-		builder.append(insertValues(entityClass,null,false));
+		builder.append(insertColumns(entityClass, null, false));
+		builder.append(insertValues(entityClass, null, false));
+		return builder.toString();
+	}
+
+	public String insertIngore(MappedStatement ms) {
+		val entityClass = getEntityClass(ms);
+		//主键回写
+		getIdentityColumn(entityClass).ifPresent(column -> newSelectKeyMappedStatement(ms, column));
+		//拼接动态SQL
+		StringBuilder builder = new StringBuilder(checkDefaultParamValue());
+		builder.append(insertUniqueId(entityClass, getUUID()));
+		builder.append(insertIgnoreIntoTable(entityClass, tableName(entityClass)));
+		builder.append(insertColumns(entityClass, null, false));
+		builder.append(insertValues(entityClass, null, false));
+		return builder.toString();
+	}
+
+
+	public String batchInsert(MappedStatement ms) {
+		val entityClass = getEntityClass(ms);
+		//主键回写
+		getIdentityColumn(entityClass).ifPresent(column -> newSelectKeyMappedStatement(ms, column));
+		//拼接动态SQL
+		StringBuilder builder = new StringBuilder(checkDefaultParamValue());
+		builder.append(insertUniqueId(entityClass, getUUID()));
+		builder.append(insertBatchIntoTable(tableName(entityClass)));
+		builder.append(insertBatchColumns(entityClass));
+		builder.append(insertBatchValues(entityClass, getUUID()));
+		return builder.toString();
+	}
+
+	public String batchInsertIgnore(MappedStatement ms) {
+		val entityClass = getEntityClass(ms);
+		//主键回写
+		getIdentityColumn(entityClass).ifPresent(column -> newSelectKeyMappedStatement(ms, column));
+		//拼接动态SQL
+		StringBuilder builder = new StringBuilder(checkDefaultParamValue());
+		builder.append(insertUniqueId(entityClass, getUUID()));
+		builder.append(insertBatchIgnoreIntoTable(tableName(entityClass)));
+		builder.append(insertBatchColumns(entityClass));
+		builder.append(insertBatchValues(entityClass, getUUID()));
 		return builder.toString();
 	}
 
