@@ -4,7 +4,6 @@ import org.throwable.mapper.common.entity.EntityColumn;
 import org.throwable.mapper.common.entity.EntityTable;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static org.throwable.mapper.common.constant.CommonConstants.*;

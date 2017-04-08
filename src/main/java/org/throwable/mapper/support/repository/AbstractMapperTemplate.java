@@ -232,7 +232,7 @@ public abstract class AbstractMapperTemplate {
 		Class<?> entityClass = getEntityClass(ms);
 		KeyGenerator keyGenerator;
 		String generator = isBlank(column.getGenerator()) ? getIDENTITY() : column.getGenerator();
-		if (generator.equalsIgnoreCase(GENERATED_JDBC)) {
+		if (GENERATED_JDBC.equalsIgnoreCase(generator)) {
 			keyGenerator = new MultipleJdbc3KeyGenerator();
 		} else {
 			SqlSource sqlSource = new DynamicSqlSource(config, SqlAppendAssistor.getSelectKeySql(column, generator));
