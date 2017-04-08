@@ -15,6 +15,11 @@ import static org.throwable.mapper.common.constant.CommonConstants.PARAM_DEFAULT
  */
 public abstract class SelectSqlAppendAssistor extends ConditionSqlAppendAssistor {
 
+
+	public static String selectCountStart(){
+		return "SELECT COUNT(*) ";
+	}
+
 	/**
 	 * select指定列，支持distinct查询
 	 */

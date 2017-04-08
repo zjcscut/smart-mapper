@@ -29,7 +29,6 @@ public class EntityColumn {
 	private JdbcType jdbcType;
 	private Class<? extends TypeHandler<?>> typeHandler;
 	private String sequenceName;
-	private boolean primaryKey = false;
 	private boolean UUID = false;
 	private boolean identity = false;
 	private String generator;
@@ -142,7 +141,6 @@ public class EntityColumn {
 		if (o == null || getClass() != o.getClass()) return false;
 
 		EntityColumn that = (EntityColumn) o;
-		if (primaryKey != that.primaryKey) return false;
 		if (UUID != that.UUID) return false;
 		if (identity != that.identity) return false;
 		if (table != null ? !table.equals(that.table) : that.table != null) return false;
@@ -165,7 +163,6 @@ public class EntityColumn {
 		result = 31 * result + (jdbcType != null ? jdbcType.hashCode() : 0);
 		result = 31 * result + (typeHandler != null ? typeHandler.hashCode() : 0);
 		result = 31 * result + (sequenceName != null ? sequenceName.hashCode() : 0);
-		result = 31 * result + (primaryKey ? 1 : 0);
 		result = 31 * result + (UUID ? 1 : 0);
 		result = 31 * result + (identity ? 1 : 0);
 		result = 31 * result + (generator != null ? generator.hashCode() : 0);

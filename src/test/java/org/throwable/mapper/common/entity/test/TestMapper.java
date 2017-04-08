@@ -1,5 +1,7 @@
 package org.throwable.mapper.common.entity.test;
 
+import com.google.common.collect.Lists;
+import lombok.ToString;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,8 @@ import org.throwable.mapper.configuration.MybatisAutoConfiguration;
 import org.throwable.mapper.support.context.BeanRegisterHandler;
 import org.throwable.mapper.support.filter.impl.IncludeFieldFilter;
 import org.throwable.mapper.support.plugins.condition.Condition;
+import org.throwable.mapper.support.plugins.pagination.PageModel;
+import org.throwable.mapper.support.plugins.pagination.Pager;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -76,11 +80,29 @@ public class TestMapper {
 	@Test
 	public void testCondition()throws Exception{
 		Condition condition = Condition.create(User.class);
-		condition.eq("id","109");
+		condition.gt("id",0).like("name","%pp%").desc("id").or("name","like","%z%").limit(1,10);
 		List<User> users = userMapper.selectCondition(condition);
 		assertNotNull(users);
 		for (User u : users){
 			System.out.println(u);
 		}
+		long count = userMapper.countCondition(condition);
+		System.out.println(count);
+		PageModel<User> userPage = userMapper.selectConditionByPage(condition,new Pager(1,10));
+		assertNotNull(userPage);
+	}
+
+	@Test
+	public void testUpdate()throws Exception{
+		User user1 = new User();
+		user1.setAge(251);
+		user1.setSex("sdasdasd");
+		user1.setName("你好好好");
+		user1.setId(110L);
+		List<User> list = Lists.newArrayList();
+		list.add(user1);
+		int count = userMapper.batchUpdate(list);
+		System.out.println(count);
+
 	}
 }

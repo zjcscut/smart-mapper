@@ -110,4 +110,18 @@ public abstract class OGNL {
 	public static boolean isNotDynamicParameter(Object parameter) {
 		return !isDynamicParameter(parameter);
 	}
+
+	/**
+	 * 是否含有排序子句
+	 *
+	 * @param parameter
+	 * @return
+	 */
+	public static boolean hasOrderByClause(Object parameter) {
+		if (parameter != null && parameter instanceof Condition) {
+			Condition condition = (Condition) parameter;
+			return condition.getSort().getOrders().size() > 0;
+		}
+		return false;
+	}
 }

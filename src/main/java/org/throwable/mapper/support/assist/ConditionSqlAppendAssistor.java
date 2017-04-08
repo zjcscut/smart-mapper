@@ -13,10 +13,10 @@ import static org.throwable.mapper.common.constant.CommonConstants.*;
 public abstract class ConditionSqlAppendAssistor extends SqlAppendAssistor {
 
 
-	public static String getSelectColumnsClause(Class<?> entityClass){
+	public static String getSelectColumnsClause(Class<?> entityClass) {
 		return EntityTableAssisor.getAllColumns(entityClass).stream()
 				.map(EntityColumn::getColumn)
-				.reduce((c1,c2) -> c1 +"," + c2)
+				.reduce((c1, c2) -> c1 + "," + c2)
 				.orElse("");
 	}
 
@@ -34,9 +34,10 @@ public abstract class ConditionSqlAppendAssistor extends SqlAppendAssistor {
 		String conditionEntity = getEntityPrefix(parameterName);
 		return "<where>\n" +
 				"  <if test=\"" + conditionEntity + " neq null\">\n" +
-				"    <foreach collection=\"" + conditionEntity + ".criterias\" item=\"criterion\" separator=\"or\">\n" +
-				"     <if test=\"criterion.valid\">\n" +
-				"        <trim prefixOverrides=\"and\" >\n" +
+				"    <foreach collection=\"" + conditionEntity + ".criteriaCollection\" item=\"criteriaCollectionItem\" separator=\"or\">\n" +
+				"     <if test=\"criteriaCollectionItem.valid\">\n" +
+				"        <trim prefix=\"(\" prefixOverrides=\"and\" suffix=\")\">\n" +
+				"          <foreach collection=\"criteriaCollectionItem.criterias\" item=\"criterion\">\n" +
 				"            <choose>\n" +
 				"              <when test=\"criterion.noneValue\">\n" +
 				"                and ${criterion.conditionClause}\n" +
@@ -54,28 +55,32 @@ public abstract class ConditionSqlAppendAssistor extends SqlAppendAssistor {
 				"                </foreach>\n" +
 				"              </when>\n" +
 				"            </choose>\n" +
+				"          </foreach>\n" +
 				"        </trim>\n" +
 				"      </if>\n" +
 				"    </foreach>\n" +
 				"  </if>\n" +
-				"</where>";
+				"</where>\n";
 	}
 
 	/**
 	 * Condition查询中的order结构
 	 */
-	public static String conditionOrderByClause() {
-		return "<trim prefix=\"ORDER BY\">\n" +
-				"  <foreach collection=\"orders\" item=\"order\" separator=\", \">\n" +
-				"    ${property} ${direction}" +
-				"  </foreach>\n" +
-				"</trim>";
+	public static String conditionOrderByClause(String parameterName) {
+		String conditionEntity = getEntityPrefix(parameterName);
+
+		return "<if test=\"" + conditionEntity + " neq null and @org.throwable.mapper.utils.OGNL@hasOrderByClause(condition)\"> \n" +
+				"<trim prefix=\"ORDER BY\">\n" +
+				"  <foreach collection=\"" + conditionEntity + ".sort.orders\" item=\"order\" separator=\", \">\n" +
+				"    ${order.property} ${order.direction}" +
+				"  \n</foreach>\n" +
+				"</trim>\n" +
+				"</if>\n";
 	}
 
-	/**
-	 * Condition查询中的limit结构
-	 */
-	public static String conditionLimitByClause() {
-		return getIfNotNull("limit", "limit #{limit.offset}, #{limit.size}");
+
+	public static String conditionLimitClause(String parameterName) {
+		String pagerEntity = getEntityPrefix(parameterName);
+		return getIfNotNull(pagerEntity, String.format(" LIMIT #{%s.offset}, #{%s.size}", pagerEntity, pagerEntity));
 	}
 }

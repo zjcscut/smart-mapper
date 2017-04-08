@@ -4,7 +4,12 @@ import org.throwable.mapper.exception.UnsupportedElementException;
 
 import java.util.Locale;
 
-
+/**
+ * @author throwable
+ * @version v1.0
+ * @description
+ * @since 2017/4/7 12:33
+ */
 public enum Direction {
 
 	ASC, DESC;

@@ -4,8 +4,9 @@ import lombok.val;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.throwable.mapper.support.assist.MapperTemplateAssistor;
 
+import static org.throwable.mapper.common.constant.CommonConstants.PARAM_PAGER;
 import static org.throwable.mapper.support.assist.SelectSqlAppendAssistor.*;
-import static org.throwable.mapper.common.constant.CommonConstants.PARAM_CONDITION;
+import static org.throwable.mapper.common.constant.CommonConstants.*;
 
 import org.throwable.mapper.support.repository.AbstractMapperTemplate;
 
@@ -31,12 +32,18 @@ public class SelectMapperProvider extends AbstractMapperTemplate {
 		builder.append(selectColumnsByCondition(entityClass));
 		builder.append(fromTable(entityClass, tableName(entityClass)));
 		builder.append(conditionWhereClause(PARAM_CONDITION));
+		builder.append(conditionOrderByClause(PARAM_CONDITION));
+		builder.append(conditionLimitClause(PARAM_CONDITION.concat(".").concat(PARAM_LIMIT)));
 		return builder.toString();
 	}
 
 	public String countCondition(MappedStatement ms) {
-
+		val entityClass = getEntityClass(ms);
 		StringBuilder builder = new StringBuilder();
+		builder.append(checkParamValue(PARAM_CONDITION));
+		builder.append(selectCountStart());
+		builder.append(fromTable(entityClass, tableName(entityClass)));
+		builder.append(conditionWhereClause(PARAM_CONDITION));
 		return builder.toString();
 	}
 }

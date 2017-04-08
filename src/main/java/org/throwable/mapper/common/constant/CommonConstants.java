@@ -18,7 +18,13 @@ public interface CommonConstants {
 
 	String PARAM_CONDITION = "condition";
 
+	String PARAM_PAGER = "pager";
+
+	String PARAM_LIMIT = "limit";
+
 	String PARAM_RECORD = "record";
+
+	String PARAM_RECORDS = "records";
 
 	String PARAM_ALLOW_UPDATE_TO_NULL = "allowUpdateToNull";
 
@@ -31,6 +37,10 @@ public interface CommonConstants {
 	String SKIP_PRIMARYKEY = "skipPrimaryKey";
 
 	String CONDTION_CLAUSE_EQ = " = ";
+	String CONDTION_CLAUSE_GT = " > ";
+	String CONDTION_CLAUSE_GTEQ = " >= ";
+	String CONDTION_CLAUSE_LT = " < ";
+	String CONDTION_CLAUSE_LTEQ = " <= ";
 	String CONDTION_CLAUSE_IN = " IN ";
 	String CONDTION_CLAUSE_NOT_IN = " NOT IN ";
 	String CONDTION_CLAUSE_BETWEEN = " BETWEEN ";

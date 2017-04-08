@@ -16,6 +16,7 @@ import org.throwable.mapper.support.plugins.sort.Order;
 import org.throwable.mapper.support.plugins.sort.Sort;
 import org.throwable.mapper.utils.ArraysUtils;
 
+import javax.validation.constraints.Min;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,6 +46,7 @@ public class Condition {
 	@Setter
 	private boolean forceMode = false;
 
+	@Getter
 	private final EntityTable entityTable;
 
 	private final Map<String, EntityColumn> propertyMap;
@@ -53,12 +55,16 @@ public class Condition {
 	private Set<String> selectColumns;
 
 	@Getter
-	private LinkedList<Criteria> criterias;
+	private LinkedList<CriteriaCollection> criteriaCollection;
+
+	@Getter
+	private Limit limit;
 
 	private Condition(Class<?> entity) {
 		this.entity = entity;
 		this.sort = new Sort();
-		this.criterias = Lists.newLinkedList();
+		this.criteriaCollection = Lists.newLinkedList();
+		this.criteriaCollection.addLast(new CriteriaCollection());
 		this.entityTable = EntityTableAssisor.getEntityTable(entity);
 		this.propertyMap = entityTable.getPropertyMap();
 	}
@@ -104,7 +110,31 @@ public class Condition {
 
 	public Condition eq(String key, Object value) {
 		if (checkMatchColumn(key))
-			this.criterias.addLast(new Criteria(matchColumn(key) + CONDTION_CLAUSE_EQ, value));
+			this.criteriaCollection.getLast().addCriteria(new Criteria(matchColumn(key) + CONDTION_CLAUSE_EQ, value));
+		return this;
+	}
+
+	public Condition gt(String key, Object value) {
+		if (checkMatchColumn(key))
+			this.criteriaCollection.getLast().addCriteria(new Criteria(matchColumn(key) + CONDTION_CLAUSE_GT, value));
+		return this;
+	}
+
+	public Condition gteq(String key, Object value) {
+		if (checkMatchColumn(key))
+			this.criteriaCollection.getLast().addCriteria(new Criteria(matchColumn(key) + CONDTION_CLAUSE_GTEQ, value));
+		return this;
+	}
+
+	public Condition lt(String key, Object value) {
+		if (checkMatchColumn(key))
+			this.criteriaCollection.getLast().addCriteria(new Criteria(matchColumn(key) + CONDTION_CLAUSE_LT, value));
+		return this;
+	}
+
+	public Condition lteq(String key, Object value) {
+		if (checkMatchColumn(key))
+			this.criteriaCollection.getLast().addCriteria(new Criteria(matchColumn(key) + CONDTION_CLAUSE_LTEQ, value));
 		return this;
 	}
 
@@ -112,6 +142,18 @@ public class Condition {
 		switch (op.trim().toUpperCase(Locale.US)) {
 			case "=":
 				eq(key, value);
+				break;
+			case ">":
+				gt(key, value);
+				break;
+			case "<":
+				lt(key, value);
+				break;
+			case ">=":
+				gteq(key, value);
+				break;
+			case "<=":
+				lteq(key, value);
 				break;
 			case "IN":
 				in(key, value);
@@ -134,59 +176,100 @@ public class Condition {
 
 	public Condition in(String key, Object values) {
 		if (checkMatchColumn(key))
-			this.criterias.addLast(new Criteria(matchColumn(key) + CONDTION_CLAUSE_IN, convertStringToCollection(values)));
+			this.criteriaCollection.getLast().addCriteria(new Criteria(matchColumn(key) + CONDTION_CLAUSE_IN, convertStringToCollection(values)));
 		return this;
 	}
 
 	public Condition in(String key, Collection<?> values) {
 		if (checkMatchColumn(key))
-			this.criterias.addLast(new Criteria(matchColumn(key) + CONDTION_CLAUSE_IN, values));
+			this.criteriaCollection.getLast().addCriteria(new Criteria(matchColumn(key) + CONDTION_CLAUSE_IN, values));
 		return this;
 	}
 
 	public Condition notIn(String key, Object values) {
 		if (checkMatchColumn(key))
-			this.criterias.addLast(new Criteria(matchColumn(key) + CONDTION_CLAUSE_NOT_IN, convertStringToCollection(values)));
+			this.criteriaCollection.getLast().addCriteria(new Criteria(matchColumn(key) + CONDTION_CLAUSE_NOT_IN, convertStringToCollection(values)));
 		return this;
 	}
 
 	public Condition notIn(String key, Collection<?> values) {
 		if (checkMatchColumn(key))
-			this.criterias.addLast(new Criteria(matchColumn(key) + CONDTION_CLAUSE_NOT_IN, values));
+			this.criteriaCollection.getLast().addCriteria(new Criteria(matchColumn(key) + CONDTION_CLAUSE_NOT_IN, values));
 		return this;
 	}
 
 	public Condition notLike(String key, Object value) {
 		if (checkMatchColumn(key))
-			this.criterias.addLast(new Criteria(matchColumn(key) + CONDTION_CLAUSE_NOT_LIKE, value));
+			this.criteriaCollection.getLast().addCriteria(new Criteria(matchColumn(key) + CONDTION_CLAUSE_NOT_LIKE, value));
 		return this;
 	}
 
 	public Condition like(String key, Object value) {
 		if (checkMatchColumn(key))
-			this.criterias.addLast(new Criteria(matchColumn(key) + CONDTION_CLAUSE_LIKE, value));
+			this.criteriaCollection.getLast().addCriteria(new Criteria(matchColumn(key) + CONDTION_CLAUSE_LIKE, value));
 		return this;
 	}
 
 	public Condition between(String key, Object leftValue, Object rightValue) {
 		if (checkMatchColumn(key))
-			this.criterias.addLast(new Criteria(matchColumn(key) + CONDTION_CLAUSE_BETWEEN, leftValue, rightValue));
+			this.criteriaCollection.getLast().addCriteria(new Criteria(matchColumn(key) + CONDTION_CLAUSE_BETWEEN, leftValue, rightValue));
 		return this;
 	}
 
 	public Condition isTrue(String key) {
 		if (checkMatchColumn(key))
-			this.criterias.addLast(new Criteria(matchColumn(key) + CONDTION_CLAUSE_IS_TRUE));
+			this.criteriaCollection.getLast().addCriteria(new Criteria(matchColumn(key) + CONDTION_CLAUSE_IS_TRUE));
 		return this;
 	}
 
 	public Condition isNull(String key) {
 		if (checkMatchColumn(key))
-			this.criterias.addLast(new Criteria(matchColumn(key) + CONDTION_CLAUSE_IS_NULL));
+			this.criteriaCollection.getLast().addCriteria(new Criteria(matchColumn(key) + CONDTION_CLAUSE_IS_NULL));
 		return this;
 	}
 
+	/**
+	 * or子句特殊处理,新建一个条件集合作为or子句
+	 */
+	public Condition or(String key, String op, Object value) {
+		if (checkMatchColumn(key)) {
+			this.criteriaCollection.addLast(new CriteriaCollection());
+			and(key, op, value);
+		}
+		return this;
+	}
 
+	public Condition limit(int offset, int size) {
+		this.limit = new Limit(offset, size);
+		return this;
+	}
+
+	/**
+	 * 条件集合
+	 */
+	@Getter
+	public static class CriteriaCollection {
+
+		private LinkedList<Criteria> criterias;
+
+		public CriteriaCollection() {
+			criterias = Lists.newLinkedList();
+		}
+
+		public void addCriteria(Criteria criteria) {
+			criterias.addLast(criteria);
+		}
+
+		//是否合法,至少包含一个条件语句
+		public boolean valid() {
+			return criterias.size() > 0;
+		}
+	}
+
+
+	/**
+	 * 单个条件元素
+	 */
 	@Getter
 	public static class Criteria {
 
@@ -223,9 +306,27 @@ public class Condition {
 			this.betweenValue = true;
 		}
 
-		//是否合法,至少满足条件子句不为空
-		public boolean valid() {
-			return StringUtils.isNotBlank(conditionClause);
+	}
+
+
+	@Getter
+	private static class Limit {
+
+		@Min(0)
+		private final int offset;
+
+		@Min(1)
+		private final int size;
+
+		public Limit(int offset, int size) {
+			if (offset < 0) {
+				throw new IllegalArgumentException("Limit field offset must not be lt 0");
+			}
+			if (size < 1) {
+				throw new IllegalArgumentException("Limit field size must not be lt 1");
+			}
+			this.offset = offset;
+			this.size = size;
 		}
 	}
 
@@ -245,7 +346,7 @@ public class Condition {
 
 	private Collection<?> convertStringToCollection(Object value) {
 		if (value instanceof String) {
-			String[] values = ((String) value).split(",");
+			String[] values = ((String) value).split(COMMA);
 			return ArraysUtils.arrayToList(values);
 		}
 		return (Collection<?>) value;
