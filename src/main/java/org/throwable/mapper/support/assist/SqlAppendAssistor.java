@@ -33,7 +33,7 @@ import static org.throwable.mapper.utils.OGNL.*;
 @Slf4j
 public abstract class SqlAppendAssistor  extends FieldFilterAssistor{
 
-	protected static Optional<EntityColumn> getIdentityColumn(final Class<?> entityClass) {
+	public static Optional<EntityColumn> getIdentityColumn(final Class<?> entityClass) {
 		Set<EntityColumn> columnList = EntityTableAssisor.getPrimaryColumns(entityClass).stream()
 				.filter(EntityColumn::isInsertable)
 				.filter(EntityColumn::isIdentity)
@@ -47,11 +47,11 @@ public abstract class SqlAppendAssistor  extends FieldFilterAssistor{
 		return Optional.of(columnList.iterator().next());
 	}
 
-	protected static String checkDefaultParamValue() {
+	public static String checkDefaultParamValue() {
 		return checkParamValue(PARAM_DEFAULT);
 	}
 
-	protected static String checkParamValue(String... parameterNames) {
+	public static String checkParamValue(String... parameterNames) {
 		if (parameterNames.length == 1) {
 			String exp = format(CHECK_FOR_NULL, parameterNames[0], "'parameter must not be null'");
 			return "<if test=\"" + exp + "\"/>\n";
@@ -85,7 +85,7 @@ public abstract class SqlAppendAssistor  extends FieldFilterAssistor{
 		return "`" + column + "`";
 	}
 
-	static String getSingleColumnPair(Class<?> entityClass) {
+	public static String getSingleColumnPair(Class<?> entityClass) {
 		Set<EntityColumn> columns = EntityTableAssisor.getAllColumns(entityClass);
 		String field = format(TRIM_AND_TO_LOWERCASE, "field");
 		String fieldWithoutDelimiter = format(REMOVE_DELIMITER, field);
@@ -294,12 +294,12 @@ public abstract class SqlAppendAssistor  extends FieldFilterAssistor{
 	}
 
 	/**
-	 * 获取访问实体属性的前缀，如：order.
+	 * 获取访问实体属性的前缀
 	 *
 	 * @param parameterName @Param注解里的值，如果只有一个参数，则mybatis会解析为_parameter
 	 */
 	static String getEntityPrefix(String parameterName) {
-		return Objects.equals(parameterName, PARAM_DEFAULT) ? "" : parameterName + ".";
+		return Objects.equals(parameterName, PARAM_DEFAULT) ? "" : parameterName;
 	}
 
 	/**
@@ -312,4 +312,5 @@ public abstract class SqlAppendAssistor  extends FieldFilterAssistor{
 		SqlNode defaultSqlNode = new TextSqlNode("SELECT " + getColumnHolder(column));
 		return new ChooseSqlNode(newArrayList(ifSqlNode), defaultSqlNode);
 	}
+
 }

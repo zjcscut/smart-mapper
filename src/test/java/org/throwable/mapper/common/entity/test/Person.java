@@ -2,6 +2,7 @@ package org.throwable.mapper.common.entity.test;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -20,9 +21,9 @@ public class Person {
 	private static final String PREFIX = "PREFIX";
 	private transient Date d;
 	@Column(name = "SEX")
-	private String sex;
+	protected String sex;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
 	@Column(name = "ID")
-	private Long id;
+	protected Long id;
 }

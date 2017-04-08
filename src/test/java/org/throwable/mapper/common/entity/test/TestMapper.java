@@ -10,6 +10,8 @@ import org.throwable.mapper.Application;
 import org.throwable.mapper.common.entity.test.mapper.UserMapper;
 import org.throwable.mapper.configuration.MybatisAutoConfiguration;
 import org.throwable.mapper.support.context.BeanRegisterHandler;
+import org.throwable.mapper.support.filter.impl.IncludeFieldFilter;
+import org.throwable.mapper.support.plugins.condition.Condition;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -69,5 +71,16 @@ public class TestMapper {
 		userMapper.batchInsert(users);
 		System.out.println(user1.getId());
 		System.out.println(user2.getId());
+	}
+
+	@Test
+	public void testCondition()throws Exception{
+		Condition condition = Condition.create(User.class);
+		condition.eq("id","109");
+		List<User> users = userMapper.selectCondition(condition);
+		assertNotNull(users);
+		for (User u : users){
+			System.out.println(u);
+		}
 	}
 }

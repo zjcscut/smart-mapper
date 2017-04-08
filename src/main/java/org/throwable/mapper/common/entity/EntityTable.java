@@ -8,6 +8,7 @@ import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.session.Configuration;
 import org.throwable.mapper.common.constant.NameStyleEnum;
+import org.throwable.mapper.support.repository.NameStyleContext;
 
 import javax.persistence.Table;
 import java.util.*;
@@ -41,7 +42,7 @@ public class EntityTable {
 	protected Map<String, EntityColumn> propertyMap;
 	//类
 	private Class<?> entityClass;
-
+	//命名规范
 	private NameStyleEnum nameStyle;
 
 	public EntityTable(Class<?> entityClass) {
@@ -138,9 +139,6 @@ public class EntityTable {
 		return this.resultMap;
 	}
 
-	/**
-	 *
-	 */
 	public void initPropertyMap() {
 		propertyMap = new HashMap<>(getEntityClassColumns().size());
 		for (EntityColumn column : getEntityClassColumns()) {
@@ -148,8 +146,13 @@ public class EntityTable {
 		}
 	}
 
-
 	public Map<String, EntityColumn> getPropertyMap() {
 		return propertyMap;
 	}
+
+	public String columnNameStyleConvert(String key) {
+		return NameStyleContext.convert(nameStyle, key);
+	}
+
+
 }

@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 import org.throwable.mapper.common.constant.NameStyleEnum;
 import org.throwable.mapper.common.entity.EntityColumn;
 import org.throwable.mapper.support.filter.FieldFilter;
-import org.throwable.mapper.support.repository.NameStyleContext;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,27 +16,23 @@ import java.util.stream.Collectors;
  */
 public abstract class FieldFilterAssistor {
 
-	protected static Set<EntityColumn> filter(Set<EntityColumn> entityColumns, FieldFilter fieldFilter) {
-		if (null == entityColumns || entityColumns.size() == 0){
+	public static Set<EntityColumn> filter(Set<EntityColumn> entityColumns, FieldFilter fieldFilter) {
+		if (null == entityColumns || entityColumns.size() == 0) {
 			return Sets.newHashSet();
 		}
-		NameStyleEnum style = entityColumns.iterator().next().getTable().getNameStyle();
-		Set<String> filterFields = Sets.newHashSet();
-		for (String input : fieldFilter.accept()) {
-			filterFields.add(NameStyleContext.convert(style, input));
-		}
+		Set<String> filterFields = fieldFilter.accept();
 		if (fieldFilter.isInculdeFilter()) {
 			return entityColumns.stream()
-					.filter(a -> filterFields.contains(a.getColumn()))
+					.filter(a -> filterFields.contains(a.getProperty()))
 					.collect(Collectors.toSet());
 		} else {
 			return entityColumns.stream()
-					.filter(a -> !filterFields.contains(a.getColumn()))
+					.filter(a -> !filterFields.contains(a.getProperty()))
 					.collect(Collectors.toSet());
 		}
 	}
 
-	protected static Set<EntityColumn> getFilterColumns(Class<?> entityClass,FieldFilter fieldFilter,boolean skipPrimaryKey){
+	public static Set<EntityColumn> getFilterColumns(Class<?> entityClass, FieldFilter fieldFilter, boolean skipPrimaryKey) {
 		Set<EntityColumn> columnList = skipPrimaryKey ? EntityTableAssisor.getNonePrimaryColumns(entityClass)
 				: EntityTableAssisor.getAllColumns(entityClass);
 		if (null != fieldFilter) {

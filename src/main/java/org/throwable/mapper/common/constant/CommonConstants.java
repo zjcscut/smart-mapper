@@ -30,4 +30,12 @@ public interface CommonConstants {
 
 	String SKIP_PRIMARYKEY = "skipPrimaryKey";
 
+	String CONDTION_CLAUSE_EQ = " = ";
+	String CONDTION_CLAUSE_IN = " IN ";
+	String CONDTION_CLAUSE_NOT_IN = " NOT IN ";
+	String CONDTION_CLAUSE_BETWEEN = " BETWEEN ";
+	String CONDTION_CLAUSE_LIKE = " LIKE ";
+	String CONDTION_CLAUSE_NOT_LIKE = " NOT LIKE ";
+	String CONDTION_CLAUSE_IS_TRUE = " IS TRUE ";
+	String CONDTION_CLAUSE_IS_NULL = " IS NULL ";
 }

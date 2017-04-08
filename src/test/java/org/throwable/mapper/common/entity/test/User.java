@@ -3,6 +3,7 @@ package org.throwable.mapper.common.entity.test;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.throwable.mapper.common.annotation.ColumnExtend;
 import org.throwable.mapper.common.annotation.NameStyle;
 import org.throwable.mapper.common.constant.NameStyleEnum;
@@ -35,4 +36,14 @@ public class User extends Person{
 	private Date birth;
 
 
+	@Override
+	public String toString() {
+		return "User{" +
+				"sex='" + sex + '\'' +
+				", id=" + id +
+				", name='" + name + '\'' +
+				", age=" + age +
+				", birth=" + birth +
+				'}';
+	}
 }

@@ -19,8 +19,8 @@ public interface SelectMapper<T> {
 
     @SelectProvider(type = SelectMapperProvider.class, method = "dynamicSQL")
     List<T> selectCondition(@Param(PARAM_CONDITION) Condition condition);
-
-    @SelectProvider(type = SelectMapperProvider.class, method = "dynamicSQL")
-    long countCondition(@Param(PARAM_CONDITION) Condition condition);
+//
+//    @SelectProvider(type = SelectMapperProvider.class, method = "dynamicSQL")
+//    long countCondition(@Param(PARAM_CONDITION) Condition condition);
 
 }
