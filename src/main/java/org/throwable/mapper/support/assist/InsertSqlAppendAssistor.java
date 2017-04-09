@@ -103,7 +103,7 @@ public abstract class InsertSqlAppendAssistor extends SqlAppendAssistor {
 	}
 
 	public static String insertBatchColumns(Class<?> entityClass) {
-		Set<EntityColumn> columnList = EntityTableAssisor.getAllColumns(entityClass);
+		Set<EntityColumn> columnList = EntityTableAssisor.getNonePrimaryColumns(entityClass);
 		StringBuilder sql = new StringBuilder();
 		sql.append("<trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">");
 		columnList.forEach(column -> sql.append(column.getColumn()).append(","));
@@ -112,18 +112,12 @@ public abstract class InsertSqlAppendAssistor extends SqlAppendAssistor {
 	}
 
 	public static String insertBatchValues( Class<?> entityClass) {
-		Set<EntityColumn> columnList = EntityTableAssisor.getAllColumns(entityClass);
+		Set<EntityColumn> columnList = EntityTableAssisor.getNonePrimaryColumns(entityClass);
 		StringBuilder sql = new StringBuilder();
 		sql.append(" VALUES ");
 		sql.append("<foreach collection=\"list\" item=\"record\" separator=\",\" >");
 		sql.append("<trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">");
-		columnList.forEach(column -> {
-			if (column.isUUID()){
-				sql.append(column.getColumnHolder()).append(",");
-			}else {
-				sql.append(column.getColumnHolder("record")).append(",");
-			}
-		});
+		columnList.forEach(column -> sql.append(column.getColumnHolder("record")).append(","));
 		sql.append("</trim>");
 		sql.append("</foreach>");
 		return sql.toString();
