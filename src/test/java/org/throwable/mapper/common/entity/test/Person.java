@@ -23,7 +23,7 @@ public class Person {
 	@Column(name = "SEX")
 	protected String sex;
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY,generator = "JDBC")
+	@GeneratedValue(strategy = GenerationType.IDENTITY,generator = "UUID")
 	@Column(name = "ID")
-	protected Long id;
+	protected String id;
 }

@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.throwable.mapper.common.constant.CommonConstants.*;
+
 /**
  * @author throwable
  * @version v1.0
@@ -53,10 +55,6 @@ public class EntityTableAssisor extends EntityInfoRepository {
 		}
 		table.setOrderByClause(orderBy.toString());
 		return table.getOrderByClause();
-	}
-
-	public static Set<EntityColumn> getUUIDColumns(Class<?> entityClass){
-		return getEntityTable(entityClass).getEntityClassUUIDColumns();
 	}
 
 	public static Set<EntityColumn> getAllColumns(Class<?> entityClass) {
@@ -211,10 +209,9 @@ public class EntityTableAssisor extends EntityInfoRepository {
 			entityColumn.setSequenceName(sequenceGenerator.sequenceName());
 		} else if (field.isAnnotationPresent(GeneratedValue.class)) {
 			GeneratedValue generatedValue = field.getAnnotation(GeneratedValue.class);
-			if (generatedValue.generator().equals("UUID")) {
+			if (generatedValue.generator().equalsIgnoreCase(GENERATED_UUID)) {
 				entityColumn.setUUID(true);
-				entityTable.getEntityClassUUIDColumns().add(entityColumn);
-			} else if (generatedValue.generator().equals("JDBC")) {
+			} else if (generatedValue.generator().equalsIgnoreCase(GENERATED_JDBC)) {
 				entityColumn.setIdentity(true);
 				entityColumn.setGenerator("JDBC");
 				entityTable.setKeyProperties(entityColumn.getProperty());

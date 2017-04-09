@@ -24,7 +24,7 @@ public class SelectMapperProvider extends AbstractMapperTemplate {
 		super(mapperClass, mapperTemplateAssistor);
 	}
 
-	public String selectCondition(MappedStatement ms) {
+	public String selectByCondition(MappedStatement ms) {
 		val entityClass = getEntityClass(ms);
 		setResultType(ms, entityClass);
 		StringBuilder builder = new StringBuilder();
@@ -37,7 +37,7 @@ public class SelectMapperProvider extends AbstractMapperTemplate {
 		return builder.toString();
 	}
 
-	public String countCondition(MappedStatement ms) {
+	public String countByCondition(MappedStatement ms) {
 		val entityClass = getEntityClass(ms);
 		StringBuilder builder = new StringBuilder();
 		builder.append(checkParamValue(PARAM_CONDITION));

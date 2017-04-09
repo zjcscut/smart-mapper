@@ -4,4 +4,8 @@
 <mapper namespace="org.throwable.mapper.common.entity.test.mapper.UserMapper">
 
 
+    <insert id="insertDynamicKey" useGeneratedKeys="true" keyProperty="id" parameterType="org.throwable.mapper.common.entity.test.User">
+        <bind name="id" value='@java.util.UUID@randomUUID().toString().replace("-", "")'/>
+        INSERT INTO User(ID,SEX,NAME,AGE,BIRTH) VALUES (#{id},#{sex},#{name},#{age},#{birth})
+    </insert>
 </mapper>

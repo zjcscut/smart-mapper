@@ -24,7 +24,7 @@ public class PropertiesConfiguration {
 	private static final IdentityDialectEnum DEFAULT_IDENTITY_DIALECT = MYSQL;
 
 	//默认主键回写策略提交order  - 对应selectKey标签的order里面的before和end
-	private static final boolean DEFAULT_SELECTKEY_EXECUTE_BEFORE = false;
+	private static final boolean DEFAULT_SELECTKEY_EXECUTE_BEFORE = true;
 
 	//默认命名转换规范 - normal
 	private static final NameStyleEnum DEFAULT_NAMESTYLE_ENUM = NameStyleEnum.NORMAL;

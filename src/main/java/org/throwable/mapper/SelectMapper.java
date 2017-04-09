@@ -22,17 +22,17 @@ import static org.throwable.mapper.common.constant.CommonConstants.PARAM_PAGER;
  */
 public interface SelectMapper<T> {
 
-	default List<T> selectConditionLimit(Condition condition, @Min(1) int limit) {
+	default List<T> selectByConditionLimit(Condition condition, @Min(1) int limit) {
 		condition.limit(0, limit);
-		return selectCondition(condition);
+		return selectByCondition(condition);
 	}
 
-	default PageModel<T> selectConditionByPage(Condition condition, int pageNumber, int pageSize) {
-		return selectConditionByPage(condition, new Pager(pageNumber, pageSize));
+	default PageModel<T> selectByConditionPage(Condition condition, int pageNumber, int pageSize) {
+		return selectByConditionPage(condition, new Pager(pageNumber, pageSize));
 	}
 
-	default PageModel<T> selectConditionByPage(Condition condition, Pager pager) {
-		long count = countCondition(condition);
+	default PageModel<T> selectByConditionPage(Condition condition, Pager pager) {
+		long count = countByCondition(condition);
 		int lastPage = pager.getLastPage(count);
 		int offset = pager.getOffset();
 		if (offset > lastPage) {
@@ -41,16 +41,16 @@ public interface SelectMapper<T> {
 		} else {
 			condition.limit(pager.getOffset(), pager.getPageSize());
 		}
-		List<T> list = selectCondition(condition);
+		List<T> list = selectByCondition(condition);
 		return new PageModel<>(pager.getPageNumber(), pager.getPageSize(), count, list);
 	}
 
 
 
 	@SelectProvider(type = SelectMapperProvider.class, method = "dynamicSQL")
-	long countCondition(@NonNull @Param(PARAM_CONDITION) Condition condition);
+	long countByCondition(@NonNull @Param(PARAM_CONDITION) Condition condition);
 
 	@SelectProvider(type = SelectMapperProvider.class, method = "dynamicSQL")
-	List<T> selectCondition(@NonNull @Param(PARAM_CONDITION) Condition condition);
+	List<T> selectByCondition(@NonNull @Param(PARAM_CONDITION) Condition condition);
 
 }

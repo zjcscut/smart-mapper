@@ -38,7 +38,6 @@ public class InsertMapperProvider extends AbstractMapperTemplate {
 		getIdentityColumn(entityClass).ifPresent(column -> newSelectKeyMappedStatement(ms, column));
 		//拼接动态SQL
 		val builder = new StringBuilder(checkDefaultParamValue());
-		builder.append(insertUniqueId(entityClass, getUUID()));
 		builder.append(insertIntoTable(entityClass, tableName(entityClass)));
 		builder.append(insertColumns(entityClass, null, false));
 		builder.append(insertValues(entityClass, null, false));
@@ -51,7 +50,6 @@ public class InsertMapperProvider extends AbstractMapperTemplate {
 		getIdentityColumn(entityClass).ifPresent(column -> newSelectKeyMappedStatement(ms, column));
 		//拼接动态SQL
 		val builder = new StringBuilder(checkDefaultParamValue());
-		builder.append(insertUniqueId(entityClass, getUUID()));
 		builder.append(insertIgnoreIntoTable(entityClass, tableName(entityClass)));
 		builder.append(insertColumns(entityClass, null, false));
 		builder.append(insertValues(entityClass, null, false));
@@ -65,10 +63,9 @@ public class InsertMapperProvider extends AbstractMapperTemplate {
 		getIdentityColumn(entityClass).ifPresent(column -> newSelectKeyMappedStatement(ms, column));
 		//拼接动态SQL
 		val builder = new StringBuilder(checkDefaultParamValue());
-		builder.append(insertUniqueId(entityClass, getUUID()));
 		builder.append(insertBatchIntoTable(tableName(entityClass)));
 		builder.append(insertBatchColumns(entityClass));
-		builder.append(insertBatchValues(entityClass, getUUID()));
+		builder.append(insertBatchValues(entityClass));
 		return builder.toString();
 	}
 
@@ -78,10 +75,9 @@ public class InsertMapperProvider extends AbstractMapperTemplate {
 		getIdentityColumn(entityClass).ifPresent(column -> newSelectKeyMappedStatement(ms, column));
 		//拼接动态SQL
 		val builder = new StringBuilder(checkDefaultParamValue());
-		builder.append(insertUniqueId(entityClass, getUUID()));
 		builder.append(insertBatchIgnoreIntoTable(tableName(entityClass)));
 		builder.append(insertBatchColumns(entityClass));
-		builder.append(insertBatchValues(entityClass, getUUID()));
+		builder.append(insertBatchValues(entityClass));
 		return builder.toString();
 	}
 

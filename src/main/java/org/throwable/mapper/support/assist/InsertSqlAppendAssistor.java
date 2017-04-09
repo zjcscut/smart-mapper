@@ -18,20 +18,6 @@ import static org.throwable.mapper.common.constant.CommonConstants.PARAM_DEFAULT
  */
 public abstract class InsertSqlAppendAssistor extends SqlAppendAssistor {
 
-	/**
-	 * 获取预设UUID的动态SQL代码
-	 *
-	 * @param entityClass        实体类
-	 * @param uniqueIdExpression 获取唯一ID的表达式
-	 */
-	public static String insertUniqueId(final Class<?> entityClass, final String uniqueIdExpression) {
-		return EntityTableAssisor.getAllColumns(entityClass).stream()
-				.filter(EntityColumn::isInsertable)
-				.filter(EntityColumn::isUUID)
-				.map(column -> _getUniqueIdSeg(column, PARAM_DEFAULT, uniqueIdExpression))
-				.reduce(String::concat)
-				.orElse("");
-	}
 
 
 	/**
@@ -117,7 +103,7 @@ public abstract class InsertSqlAppendAssistor extends SqlAppendAssistor {
 	}
 
 	public static String insertBatchColumns(Class<?> entityClass) {
-		Set<EntityColumn> columnList = EntityTableAssisor.getNonePrimaryColumns(entityClass);
+		Set<EntityColumn> columnList = EntityTableAssisor.getAllColumns(entityClass);
 		StringBuilder sql = new StringBuilder();
 		sql.append("<trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">");
 		columnList.forEach(column -> sql.append(column.getColumn()).append(","));
@@ -125,27 +111,22 @@ public abstract class InsertSqlAppendAssistor extends SqlAppendAssistor {
 		return sql.toString();
 	}
 
-	public static String insertBatchValues(final Class<?> entityClass, final String uniqueIdExpression) {
-		Set<EntityColumn> columnList = EntityTableAssisor.getNonePrimaryColumns(entityClass);
+	public static String insertBatchValues( Class<?> entityClass) {
+		Set<EntityColumn> columnList = EntityTableAssisor.getAllColumns(entityClass);
 		StringBuilder sql = new StringBuilder();
 		sql.append(" VALUES ");
 		sql.append("<foreach collection=\"list\" item=\"record\" separator=\",\" >");
-		columnList.stream()
-				.filter(column -> column.isInsertable() && column.isUUID())
-				.forEach(column -> sql.append(_getUniqueIdSeg(column, "record", uniqueIdExpression)));
 		sql.append("<trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">");
-		columnList.forEach(column -> sql.append(column.getColumnHolder("record")).append(","));
+		columnList.forEach(column -> {
+			if (column.isUUID()){
+				sql.append(column.getColumnHolder()).append(",");
+			}else {
+				sql.append(column.getColumnHolder("record")).append(",");
+			}
+		});
 		sql.append("</trim>");
 		sql.append("</foreach>");
 		return sql.toString();
 	}
 
-	/**
-	 * 检查回写唯一主键序列
-	 */
-	private static String _getUniqueIdSeg(final EntityColumn column, final String entityName, final String uniqueIdExpression) {
-		String template = "<if test='%s == null and %s = %s'/>";
-		String property = entityName + "." + column.getProperty();
-		return String.format(template, property, property, uniqueIdExpression);
-	}
 }

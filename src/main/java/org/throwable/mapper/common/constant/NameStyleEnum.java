@@ -22,7 +22,7 @@ public enum NameStyleEnum {
 
     LOWER;
 
-    public NameStyleEnum search(String value) {
+    public static NameStyleEnum search(String value) {
         NameStyleEnum[] enums = NameStyleEnum.values();
         for (NameStyleEnum styleEnum : enums) {
             if (styleEnum.name().equalsIgnoreCase(value)) {

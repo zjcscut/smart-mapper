@@ -32,20 +32,33 @@ public interface CommonConstants {
 
 	String GENERATED_JDBC = "JDBC";
 
+	String GENERATED_UUID = "UUID";
+
 	String FIELD_FILTER = "fieldFilter";
 
 	String SKIP_PRIMARYKEY = "skipPrimaryKey";
 
 	String CONDTION_CLAUSE_EQ = " = ";
+
 	String CONDTION_CLAUSE_GT = " > ";
+
 	String CONDTION_CLAUSE_GTEQ = " >= ";
+
 	String CONDTION_CLAUSE_LT = " < ";
+
 	String CONDTION_CLAUSE_LTEQ = " <= ";
+
 	String CONDTION_CLAUSE_IN = " IN ";
+
 	String CONDTION_CLAUSE_NOT_IN = " NOT IN ";
+
 	String CONDTION_CLAUSE_BETWEEN = " BETWEEN ";
+
 	String CONDTION_CLAUSE_LIKE = " LIKE ";
+
 	String CONDTION_CLAUSE_NOT_LIKE = " NOT LIKE ";
+
 	String CONDTION_CLAUSE_IS_TRUE = " IS TRUE ";
+
 	String CONDTION_CLAUSE_IS_NULL = " IS NULL ";
 }

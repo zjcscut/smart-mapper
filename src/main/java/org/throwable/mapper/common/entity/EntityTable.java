@@ -33,8 +33,6 @@ public class EntityTable {
 	private Set<EntityColumn> entityClassColumns;
 	//实体类 => 主键信息
 	private Set<EntityColumn> entityClassPKColumns;
-	//实体类 => UUID列信息
-	private Set<EntityColumn> entityClassUUIDColumns;
 	//useGenerator包含多列的时候需要用到
 	private List<String> keyProperties;
 	private List<String> keyColumns;
@@ -73,7 +71,7 @@ public class EntityTable {
 
 	public String[] getKeyProperties() {
 		if (keyProperties != null && keyProperties.size() > 0) {
-			return keyProperties.toArray(new String[]{});
+			return keyProperties.toArray(new String[keyProperties.size()]);
 		}
 		return new String[]{};
 	}
@@ -89,7 +87,7 @@ public class EntityTable {
 
 	public String[] getKeyColumns() {
 		if (keyColumns != null && keyColumns.size() > 0) {
-			return keyColumns.toArray(new String[]{});
+			return keyColumns.toArray(new String[keyColumns.size()]);
 		}
 		return new String[]{};
 	}
@@ -106,8 +104,6 @@ public class EntityTable {
 	/**
 	 * 生成当前实体的resultMap对象
 	 *
-	 * @param configuration
-	 * @return
 	 */
 	public ResultMap getResultMap(Configuration configuration) {
 		if (this.resultMap != null) {

@@ -31,7 +31,7 @@ import static org.throwable.mapper.utils.OGNL.*;
  * @since 2017/4/4 0:07
  */
 @Slf4j
-public abstract class SqlAppendAssistor  extends FieldFilterAssistor{
+public abstract class SqlAppendAssistor extends FieldFilterAssistor {
 
 	public static Optional<EntityColumn> getIdentityColumn(final Class<?> entityClass) {
 		Set<EntityColumn> columnList = EntityTableAssisor.getPrimaryColumns(entityClass).stream()
@@ -120,7 +120,7 @@ public abstract class SqlAppendAssistor  extends FieldFilterAssistor{
 	 *
 	 * @param column 数据库列
 	 */
-	static boolean isNotNull(EntityColumn column) {
+	public static boolean isNotNull(EntityColumn column) {
 		if (column == null) {
 			throw new IllegalArgumentException("column must not be null");
 		}
@@ -136,7 +136,7 @@ public abstract class SqlAppendAssistor  extends FieldFilterAssistor{
 	 * @param column  数据库列
 	 * @param content 条件满足时的内容
 	 */
-	static String getIfNotNull(EntityColumn column, String content) {
+	public static String getIfNotNull(EntityColumn column, String content) {
 		return getIfNotNull(PARAM_DEFAULT, column, content);
 	}
 
@@ -146,7 +146,7 @@ public abstract class SqlAppendAssistor  extends FieldFilterAssistor{
 	 * @param column  数据库列
 	 * @param content 条件满足时的内容
 	 */
-	static String getIfNotNull(String parameterName, EntityColumn column, String content) {
+	public static String getIfNotNull(String parameterName, EntityColumn column, String content) {
 		return getIfNotNull(getEntityPrefix(parameterName) + column.getProperty(), content);
 	}
 
@@ -156,7 +156,7 @@ public abstract class SqlAppendAssistor  extends FieldFilterAssistor{
 	 * @param testValue 测试值
 	 * @param content   条件满足时的内容
 	 */
-	static String getIfNotNull(String testValue, String content) {
+	public static String getIfNotNull(String testValue, String content) {
 		return "<if test=\"" + testValue + " neq null\">" + content + "</if>";
 	}
 
@@ -164,28 +164,28 @@ public abstract class SqlAppendAssistor  extends FieldFilterAssistor{
 	/**
 	 * 返回格式如：columnName = #{property,jdbcType=NUMERIC,typeHandler=MyTypeHandler}
 	 */
-	static String getColumnEqualsHolder(EntityColumn column) {
+	public static String getColumnEqualsHolder(EntityColumn column) {
 		return getColumnEqualsHolder(PARAM_DEFAULT, column);
 	}
 
 	/**
 	 * 返回格式：columnName = #{[parameterName.]property,jdbcType=NUMERIC,typeHandler=MyTypeHandler}
 	 */
-	static String getColumnEqualsHolder(String parameterName, EntityColumn column) {
+	public static String getColumnEqualsHolder(String parameterName, EntityColumn column) {
 		return getColumnEqualsHolder(parameterName, column, true);
 	}
 
 	/**
 	 * 返回格式：columnName = #{parameterName/[parameterName.]property,jdbcType=NUMERIC,typeHandler=MyTypeHandler}
 	 */
-	static String getColumnEqualsHolder(String parameterName, EntityColumn column, boolean addProperty) {
+	public static String getColumnEqualsHolder(String parameterName, EntityColumn column, boolean addProperty) {
 		return column.getColumn() + " = " + getColumnHolder(parameterName, column, addProperty, "");
 	}
 
 	/**
 	 * 返回格式：#{property,jdbcType=NUMERIC,typeHandler=MyTypeHandler},
 	 */
-	static String getColumnHolderWithComma(EntityColumn column) {
+	public static String getColumnHolderWithComma(EntityColumn column) {
 		return getColumnHolderWithComma(PARAM_DEFAULT, column);
 	}
 
@@ -195,7 +195,7 @@ public abstract class SqlAppendAssistor  extends FieldFilterAssistor{
 	 * @param parameterName @Param里的参数，如果方法只有一个参数，则mybatis会解析成_parameter
 	 * @param column        数据库列
 	 */
-	static String getColumnHolderWithComma(String parameterName, EntityColumn column) {
+	public static String getColumnHolderWithComma(String parameterName, EntityColumn column) {
 		return getColumnHolder(parameterName, column, ",");
 	}
 
@@ -204,7 +204,7 @@ public abstract class SqlAppendAssistor  extends FieldFilterAssistor{
 	 *
 	 * @param column 数据库列
 	 */
-	static String getColumnHolder(EntityColumn column) {
+	public static String getColumnHolder(EntityColumn column) {
 		return getColumnHolder(PARAM_DEFAULT, column);
 	}
 
@@ -302,15 +302,5 @@ public abstract class SqlAppendAssistor  extends FieldFilterAssistor{
 		return Objects.equals(parameterName, PARAM_DEFAULT) ? "" : parameterName;
 	}
 
-	/**
-	 * 用于生成主键的动态SQL，将放入SelectKey标签
-	 *
-	 * @param generator 获取主键的SQL
-	 */
-	public static SqlNode getSelectKeySql(EntityColumn column, String generator) {
-		SqlNode ifSqlNode = new IfSqlNode(new TextSqlNode(generator), column.getProperty() + " == null");
-		SqlNode defaultSqlNode = new TextSqlNode("SELECT " + getColumnHolder(column));
-		return new ChooseSqlNode(newArrayList(ifSqlNode), defaultSqlNode);
-	}
 
 }

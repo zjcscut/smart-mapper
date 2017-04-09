@@ -81,14 +81,14 @@ public class TestMapper {
 	public void testCondition()throws Exception{
 		Condition condition = Condition.create(User.class);
 		condition.gt("id",0).like("name","%pp%").desc("id").or("name","like","%z%");
-		List<User> users = userMapper.selectCondition(condition);
+		List<User> users = userMapper.selectByCondition(condition);
 		assertNotNull(users);
 		for (User u : users){
 			System.out.println(u);
 		}
-		long count = userMapper.countCondition(condition);
+		long count = userMapper.countByCondition(condition);
 		System.out.println(count);
-		PageModel<User> userPage = userMapper.selectConditionByPage(condition,new Pager(1,10));
+		PageModel<User> userPage = userMapper.selectByConditionPage(condition,new Pager(1,10));
 		assertNotNull(userPage);
 	}
 
@@ -98,7 +98,6 @@ public class TestMapper {
 		user1.setAge(251);
 		user1.setSex("sdasdasd");
 		user1.setName("你好好好");
-		user1.setId(110L);
 		List<User> list = Lists.newArrayList();
 		list.add(user1);
 		int count = userMapper.batchUpdate(list);
@@ -106,5 +105,36 @@ public class TestMapper {
 
 	}
 
+	@Test
+	public void testInsertUUId()throws Exception{
+		User user = new User();
+		user.setSex("MAN");
+		user.setBirth(new Date());
+		user.setName("zjc");
+		user.setAge(24);
+		userMapper.insertNoneSkipPrimaryKey(user);
+//		userMapper.insertDynamicKey(user);
+		System.out.println(user.getId());
+	}
+
+
+	@Test
+	public void testBatchInsertUUId()throws Exception{
+		User user = new User();
+		user.setSex("MAN");
+		user.setBirth(new Date());
+		user.setName("zjc");
+		user.setAge(24);
+        List<User> users = Lists.newArrayList();
+        users.add(user);
+		User user1 = new User();
+		user1.setSex("WOMAN");
+		user1.setBirth(new Date());
+		user1.setName("aaaaa");
+		user1.setAge(242);
+		users.add(user1);
+		userMapper.batchInsert(users);
+		users.forEach(a->System.out.println(a.getId()));
+	}
 
 }
