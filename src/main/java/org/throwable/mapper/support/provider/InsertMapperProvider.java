@@ -25,8 +25,7 @@ public class InsertMapperProvider extends AbstractMapperTemplate {
 		//主键回写
 		getIdentityColumn(entityClass).ifPresent(column -> newSelectKeyMappedStatement(ms, column));
 		//拼接动态SQL
-		StringBuilder builder = new StringBuilder(checkDefaultParamValue());
-		builder.append(insertUniqueId(entityClass, getUUID()));
+		val builder = new StringBuilder(checkDefaultParamValue());
 		builder.append(insertIntoTable(entityClass, tableName(entityClass)));
 		builder.append(insertColumns(entityClass, null, true));
 		builder.append(insertValues(entityClass, null, true));
@@ -38,7 +37,7 @@ public class InsertMapperProvider extends AbstractMapperTemplate {
 		//主键回写
 		getIdentityColumn(entityClass).ifPresent(column -> newSelectKeyMappedStatement(ms, column));
 		//拼接动态SQL
-		StringBuilder builder = new StringBuilder(checkDefaultParamValue());
+		val builder = new StringBuilder(checkDefaultParamValue());
 		builder.append(insertUniqueId(entityClass, getUUID()));
 		builder.append(insertIntoTable(entityClass, tableName(entityClass)));
 		builder.append(insertColumns(entityClass, null, false));
@@ -51,7 +50,7 @@ public class InsertMapperProvider extends AbstractMapperTemplate {
 		//主键回写
 		getIdentityColumn(entityClass).ifPresent(column -> newSelectKeyMappedStatement(ms, column));
 		//拼接动态SQL
-		StringBuilder builder = new StringBuilder(checkDefaultParamValue());
+		val builder = new StringBuilder(checkDefaultParamValue());
 		builder.append(insertUniqueId(entityClass, getUUID()));
 		builder.append(insertIgnoreIntoTable(entityClass, tableName(entityClass)));
 		builder.append(insertColumns(entityClass, null, false));
@@ -65,7 +64,7 @@ public class InsertMapperProvider extends AbstractMapperTemplate {
 		//主键回写
 		getIdentityColumn(entityClass).ifPresent(column -> newSelectKeyMappedStatement(ms, column));
 		//拼接动态SQL
-		StringBuilder builder = new StringBuilder(checkDefaultParamValue());
+		val builder = new StringBuilder(checkDefaultParamValue());
 		builder.append(insertUniqueId(entityClass, getUUID()));
 		builder.append(insertBatchIntoTable(tableName(entityClass)));
 		builder.append(insertBatchColumns(entityClass));
@@ -78,7 +77,7 @@ public class InsertMapperProvider extends AbstractMapperTemplate {
 		//主键回写
 		getIdentityColumn(entityClass).ifPresent(column -> newSelectKeyMappedStatement(ms, column));
 		//拼接动态SQL
-		StringBuilder builder = new StringBuilder(checkDefaultParamValue());
+		val builder = new StringBuilder(checkDefaultParamValue());
 		builder.append(insertUniqueId(entityClass, getUUID()));
 		builder.append(insertBatchIgnoreIntoTable(tableName(entityClass)));
 		builder.append(insertBatchColumns(entityClass));

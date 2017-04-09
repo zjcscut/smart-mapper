@@ -20,18 +20,50 @@ import static org.throwable.mapper.common.constant.IdentityDialectEnum.MYSQL;
 @Data
 public class PropertiesConfiguration {
 
+	//默认数据库主键回写方言 - Mysql
+	private static final IdentityDialectEnum DEFAULT_IDENTITY_DIALECT = MYSQL;
+
+	//默认主键回写策略提交order  - 对应selectKey标签的order里面的before和end
+	private static final boolean DEFAULT_SELECTKEY_EXECUTE_BEFORE = false;
+
+	//默认命名转换规范 - normal
+	private static final NameStyleEnum DEFAULT_NAMESTYLE_ENUM = NameStyleEnum.NORMAL;
+
 	//默认注册SmartMapper
-	private Class<?>[] mappers = new Class[]{SmartMapper.class};
-	private String UUID = "@java.util.UUID@randomUUID().toString().replace(\"-\", \"\")";
-	private IdentityDialectEnum identity = MYSQL;
-	private String IDENTITY = identity.getIdentityRetrievalStatement();
-	private boolean BEFORE = false;
+	private static final Class<?>[] DEFAULT_REGISGER_MAPPERS = new Class[]{SmartMapper.class};
+
+	//OGNL主键策略 - 使用外部方法生成主键
+	private static final String DEFAULT_OGNLIDENTITY_STRATEGY = "@java.util.UUID@randomUUID().toString().replace(\"-\", \"\")";
+
+	//是否允许使用方法上的注解
+	private static final boolean DEFAULT_ENABLE_METHODANNOTATION = false;
+
+	//注册的mapper
+	private Class<?>[] registerMappers = DEFAULT_REGISGER_MAPPERS;
+
+	//OGNL主键策略
+	private String ognlIdentityStrategy = DEFAULT_OGNLIDENTITY_STRATEGY;
+
+	//数据库回写主键方言
+	private String identityDialect = DEFAULT_IDENTITY_DIALECT.getIdentityRetrievalStatement();
+
+	//selectKey顺序策略
+	private boolean selectKeyExecuteBefore = DEFAULT_SELECTKEY_EXECUTE_BEFORE;
+
+	//是否允许方法是的注解
+	private boolean enableMethodAnnotation = DEFAULT_ENABLE_METHODANNOTATION;
+
+	//命名规范
+	private NameStyleEnum style = DEFAULT_NAMESTYLE_ENUM;
+
+	//序列格式
 	private String seqFormat;
+
+	//catalog
 	private String catalog;
+
+	//schema
 	private String schema;
-	private boolean enableMethodAnnotation = false;
-	private boolean notEmpty = false;
-	private NameStyleEnum style = NameStyleEnum.NORMAL;
 
 	//拼接查询前缀
 	public String getPrefix() {
@@ -44,7 +76,5 @@ public class PropertiesConfiguration {
 		return "";
 	}
 
-	public String getIDENTITY() {
-		return IDENTITY;
-	}
+
 }

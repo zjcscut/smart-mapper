@@ -30,6 +30,8 @@ import static org.throwable.mapper.common.constant.CommonConstants.*;
  */
 public class Condition {
 
+	private static final boolean FORCE_MODE = false;
+
 	@Getter
 	private final Class<?> entity;
 
@@ -43,8 +45,7 @@ public class Condition {
 	private boolean isDistinct;
 
 	@Getter
-	@Setter
-	private boolean forceMode = false;
+	private boolean forceMode = FORCE_MODE;
 
 	@Getter
 	private final EntityTable entityTable;
@@ -239,8 +240,19 @@ public class Condition {
 		return this;
 	}
 
+	/**
+	 * limit子句,实际上分页的入参最终会转化为此子句
+	 */
 	public Condition limit(int offset, int size) {
 		this.limit = new Limit(offset, size);
+		return this;
+	}
+
+	/**
+	 * 是否开启强制模式,开启后所有异常字段直接抛出异常,否则忽略
+	 */
+	public Condition forceMode(boolean open){
+		this.forceMode = open;
 		return this;
 	}
 
@@ -271,7 +283,7 @@ public class Condition {
 	 * 单个条件元素
 	 */
 	@Getter
-	public static class Criteria {
+	private static class Criteria {
 
 		private String conditionClause;  //条件子句
 		private Object leftValue;  //左值

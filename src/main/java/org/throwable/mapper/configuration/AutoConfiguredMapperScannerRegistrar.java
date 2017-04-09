@@ -43,6 +43,7 @@ public class AutoConfiguredMapperScannerRegistrar implements BeanFactoryAware, I
 
 	private SmartMapperProperties properties;
 
+	//为了获取mybatis一些基本的配置属性
 	@Override
 	public void setEnvironment(Environment environment) {
 		properties = new SmartMapperProperties(environment);

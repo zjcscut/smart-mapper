@@ -55,6 +55,10 @@ public class EntityTableAssisor extends EntityInfoRepository {
 		return table.getOrderByClause();
 	}
 
+	public static Set<EntityColumn> getUUIDColumns(Class<?> entityClass){
+		return getEntityTable(entityClass).getEntityClassUUIDColumns();
+	}
+
 	public static Set<EntityColumn> getAllColumns(Class<?> entityClass) {
 		return getEntityTable(entityClass).getEntityClassColumns();
 	}
@@ -209,6 +213,7 @@ public class EntityTableAssisor extends EntityInfoRepository {
 			GeneratedValue generatedValue = field.getAnnotation(GeneratedValue.class);
 			if (generatedValue.generator().equals("UUID")) {
 				entityColumn.setUUID(true);
+				entityTable.getEntityClassUUIDColumns().add(entityColumn);
 			} else if (generatedValue.generator().equals("JDBC")) {
 				entityColumn.setIdentity(true);
 				entityColumn.setGenerator("JDBC");
@@ -217,7 +222,7 @@ public class EntityTableAssisor extends EntityInfoRepository {
 			} else {
 				//config sql to fetch database last id,such as: mysql=CALL IDENTITY(),hsqldb=SELECT SCOPE_IDENTITY()
 				//允许通过拦截器参数设置公共的generator
-				if (generatedValue.strategy() == GenerationType.IDENTITY && !generatedValue.generator().equals("")) {
+				if (generatedValue.strategy() == GenerationType.IDENTITY && StringUtils.isNotBlank(generatedValue.generator())) {
 					//mysql的自动增长
 					entityColumn.setIdentity(true);
 					String generator;

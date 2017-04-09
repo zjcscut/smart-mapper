@@ -10,25 +10,25 @@ import org.throwable.mapper.exception.UnsupportedElementException;
  */
 public enum NameStyleEnum {
 
-	NORMAL,
+    NORMAL,
 
-	CAMELCASE_TO_UNDERLINE,
+    CAMELCASE_TO_UNDERLINE,
 
-	CAMELCASE_TO_UNDERLINE_UPPERCASE,
+    CAMELCASE_TO_UNDERLINE_UPPERCASE,
 
-	CAMELCASE_TO_UNDERLINE_LOWERCASE,
+    CAMELCASE_TO_UNDERLINE_LOWERCASE,
 
-	UPPER,
+    UPPER,
 
-	LOWER;
+    LOWER;
 
-	public NameStyleEnum search(String value) {
-		NameStyleEnum[] enums = NameStyleEnum.values();
-		for (NameStyleEnum styleEnum : enums) {
-			if (styleEnum.name().equalsIgnoreCase(value)) {
-				return styleEnum;
-			}
-		}
-		throw new UnsupportedElementException(String.format("没有对应的命名转换类型:%s", value));
-	}
+    public NameStyleEnum search(String value) {
+        NameStyleEnum[] enums = NameStyleEnum.values();
+        for (NameStyleEnum styleEnum : enums) {
+            if (styleEnum.name().equalsIgnoreCase(value)) {
+                return styleEnum;
+            }
+        }
+        throw new UnsupportedElementException(String.format("没有对应的命名转换类型:%s", value));
+    }
 }

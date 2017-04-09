@@ -56,7 +56,6 @@ public class MapperTemplateAssistor {
 		this.config = config;
 	}
 
-
 	/**
 	 * 核心方法,注册所有provider中的方法
 	 */

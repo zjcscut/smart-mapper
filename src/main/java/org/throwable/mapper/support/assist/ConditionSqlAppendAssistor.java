@@ -14,14 +14,15 @@ public abstract class ConditionSqlAppendAssistor extends SqlAppendAssistor {
 
 
 	public static String getSelectColumnsClause(Class<?> entityClass) {
-		return EntityTableAssisor.getAllColumns(entityClass).stream()
+		return EntityTableAssisor.getAllColumns(entityClass)
+				.stream()
 				.map(EntityColumn::getColumn)
 				.reduce((c1, c2) -> c1 + "," + c2)
 				.orElse("");
 	}
 
 	/**
-	 * Condition查询中的where结构
+	 * Condition查询中的(单参数)where结构
 	 */
 	public static String conditionWhereClause() {
 		return conditionWhereClause(PARAM_DEFAULT);
@@ -78,7 +79,9 @@ public abstract class ConditionSqlAppendAssistor extends SqlAppendAssistor {
 				"</if>\n";
 	}
 
-
+	/**
+	 * ondition查询中的limit(分页)结构
+	 */
 	public static String conditionLimitClause(String parameterName) {
 		String pagerEntity = getEntityPrefix(parameterName);
 		return getIfNotNull(pagerEntity, String.format(" LIMIT #{%s.offset}, #{%s.size}", pagerEntity, pagerEntity));

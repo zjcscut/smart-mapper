@@ -33,6 +33,8 @@ public class EntityTable {
 	private Set<EntityColumn> entityClassColumns;
 	//实体类 => 主键信息
 	private Set<EntityColumn> entityClassPKColumns;
+	//实体类 => UUID列信息
+	private Set<EntityColumn> entityClassUUIDColumns;
 	//useGenerator包含多列的时候需要用到
 	private List<String> keyProperties;
 	private List<String> keyColumns;

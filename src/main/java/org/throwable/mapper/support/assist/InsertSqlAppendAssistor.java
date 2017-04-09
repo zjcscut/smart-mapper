@@ -141,9 +141,7 @@ public abstract class InsertSqlAppendAssistor extends SqlAppendAssistor {
 	}
 
 	/**
-	 * 回写唯一键的值
-	 * <p>
-	 * 返回格式：<if test='trade_no == null and _parameter.trade_no = uniqueIdExpression'/>
+	 * 检查回写唯一主键序列
 	 */
 	private static String _getUniqueIdSeg(final EntityColumn column, final String entityName, final String uniqueIdExpression) {
 		String template = "<if test='%s == null and %s = %s'/>";

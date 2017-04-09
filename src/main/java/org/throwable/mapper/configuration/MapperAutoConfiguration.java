@@ -42,7 +42,7 @@ public class MapperAutoConfiguration implements InitializingBean {
 	public void afterPropertiesSet() throws Exception {
 		PropertiesConfiguration configuration = properties.createConfiguration();
 		MapperTemplateAssistor assistor = new MapperTemplateAssistor(configuration);
-		Stream.of(configuration.getMappers()).forEach(assistor::registerMapper);
+		Stream.of(configuration.getRegisterMappers()).forEach(assistor::registerMapper);
 		assistor.processConfiguration(sqlSessionFactory.getConfiguration());
 	}
 

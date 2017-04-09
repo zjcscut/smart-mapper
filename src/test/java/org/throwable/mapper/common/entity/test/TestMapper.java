@@ -80,7 +80,7 @@ public class TestMapper {
 	@Test
 	public void testCondition()throws Exception{
 		Condition condition = Condition.create(User.class);
-		condition.gt("id",0).like("name","%pp%").desc("id").or("name","like","%z%").limit(1,10);
+		condition.gt("id",0).like("name","%pp%").desc("id").or("name","like","%z%");
 		List<User> users = userMapper.selectCondition(condition);
 		assertNotNull(users);
 		for (User u : users){
@@ -105,4 +105,6 @@ public class TestMapper {
 		System.out.println(count);
 
 	}
+
+
 }
