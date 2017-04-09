@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.throwable.mapper.Application;
+import org.throwable.mapper.BatchExecutorService;
 import org.throwable.mapper.common.entity.test.mapper.UserMapper;
 import org.throwable.mapper.configuration.MybatisAutoConfiguration;
 import org.throwable.mapper.support.context.BeanRegisterHandler;
@@ -39,6 +40,9 @@ public class TestMapper {
 
 	@Autowired
 	private UserMapper userMapper;
+
+	@Autowired
+	private BatchExecutorService batchExecutorService;
 
 	@Test
 	public void Test1() throws Exception {
@@ -135,6 +139,11 @@ public class TestMapper {
 		users.add(user1);
 		userMapper.batchInsert(users);
 		users.forEach(a->System.out.println(a.getId()));
+	}
+
+	@Test
+	public void testBatchExecutorService()throws Exception{
+//		System.out.println(batchExecutorService.executeBatchInsert());
 	}
 
 }
