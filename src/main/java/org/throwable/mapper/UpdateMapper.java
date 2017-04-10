@@ -35,5 +35,5 @@ public interface UpdateMapper<T> {
 			   @Param(PARAM_ALLOW_UPDATE_TO_NULL) boolean allowUpdateToNull);
 
 	@UpdateProvider(type = UpdateMapperProvider.class, method = "dynamicSQL")
-	int batchUpdate(@NonNull @Param(PARAM_RECORDS) List<T> t);
+	int batchUpdate(@NonNull @Param(PARAM_RECORDS) List<T> t, @Param(PARAM_ALLOW_UPDATE_TO_NULL) boolean allowUpdateToNull);
 }

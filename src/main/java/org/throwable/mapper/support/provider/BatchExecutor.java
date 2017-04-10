@@ -22,10 +22,8 @@ public abstract class BatchExecutor {
             for (int j = start; j <= stop; j++) {
                 tempList.add(list.get(j));
             }
-            session.insert(mybatisSQLId, tempList);
-            session.commit();
-            session.clearCache();
         }
+        return commitCount;
     }
 
     protected <T>int batchInsert(List<T> list, Class<?> clazz,int batchSize){
