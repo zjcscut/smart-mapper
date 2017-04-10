@@ -128,6 +128,8 @@ public abstract class AbstractMapperTemplate {
 				//不存在的时候会抛出异常
 				cache = ms.getConfiguration().getCache(nameSpace);
 			} catch (IllegalArgumentException e) {
+				log.debug("checkCache error {}",e);
+				//ignore
 				return;
 			}
 			if (cache != null) {

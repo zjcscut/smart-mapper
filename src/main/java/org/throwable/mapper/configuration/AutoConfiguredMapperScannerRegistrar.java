@@ -34,80 +34,80 @@ import java.util.List;
  */
 @Slf4j
 public class AutoConfiguredMapperScannerRegistrar implements BeanFactoryAware, ImportBeanDefinitionRegistrar,
-		EnvironmentAware, ResourceLoaderAware {
+        EnvironmentAware, ResourceLoaderAware {
 
-	@Setter
-	private BeanFactory beanFactory;
-	@Setter
-	private ResourceLoader resourceLoader;
+    @Setter
+    private BeanFactory beanFactory;
+    @Setter
+    private ResourceLoader resourceLoader;
 
-	private SmartMapperProperties properties;
+    private SmartMapperProperties properties;
 
-	//为了获取mybatis一些基本的配置属性
-	@Override
-	public void setEnvironment(Environment environment) {
-		properties = new SmartMapperProperties(environment);
-	}
+    //为了获取mybatis一些基本的配置属性
+    @Override
+    public void setEnvironment(Environment environment) {
+        properties = new SmartMapperProperties(environment);
+    }
 
-	@Override
-	public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-		log.debug("Scanning mapper interfaces and register them into ioc container");
-		ClassPathMapperScanner scanner = new ClassPathMapperScanner(registry);
-		try {
-			if (this.resourceLoader != null) {
-				scanner.setResourceLoader(this.resourceLoader);
-			}
-			scanner.setAddToConfig(true);
-			scanner.setSqlSessionFactoryBeanName("sqlSessionFactory");
-			scanner.setSqlSessionTemplateBeanName("sqlSessionTemplate");
-			List<String> basePackages = Lists.newArrayList();
-			for (String pkg : properties.getBasePackages()) {
-				if (StringUtils.hasText(pkg)) {
-					basePackages.add(pkg);
-				}
-			}
-			//如果需要扫描的包为空,则全局扫描
-			if (basePackages.size() == 0) {
-				basePackages.addAll(AutoConfigurationPackages.get(this.beanFactory));
-			}
-			if (log.isDebugEnabled()) {
-				for (String pkg : basePackages) {
-					log.debug("Using auto-configuration base package '{}'", pkg);
-				}
-			}
-			if (null != properties.getAnnotationClass()) {
-				scanner.setAnnotationClass(properties.getAnnotationClass());
-			} else {
-				scanner.setAnnotationClass(Mapper.class);
-			}
-			Class<? extends MapperFactoryBean> mapperFactoryBeanClass = properties.getFactoryBean();
-			if (null != mapperFactoryBeanClass && !MapperFactoryBean.class.equals(mapperFactoryBeanClass)) {
-				scanner.setMapperFactoryBean(BeanUtils.instantiateClass(mapperFactoryBeanClass));
-			}
-			scanner.registerFilters();
-			scanner.doScan(StringUtils.toStringArray(basePackages));
-		} catch (IllegalStateException ex) {
-			log.debug("Could not determine auto-configuration package, automatic mapper scanning disabled.", ex);
-		}
-	}
+    @Override
+    public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+        log.debug("Scanning mapper interfaces and register them into ioc container");
+        ClassPathMapperScanner scanner = new ClassPathMapperScanner(registry);
+        try {
+            if (null != this.resourceLoader) {
+                scanner.setResourceLoader(this.resourceLoader);
+            }
+            scanner.setAddToConfig(true);
+            scanner.setSqlSessionFactoryBeanName("sqlSessionFactory");
+            scanner.setSqlSessionTemplateBeanName("sqlSessionTemplate");
+            List<String> basePackages = Lists.newArrayList();
+            for (String pkg : properties.getBasePackages()) {
+                if (StringUtils.hasText(pkg)) {
+                    basePackages.add(pkg);
+                }
+            }
+            //如果需要扫描的包为空,则全局扫描
+            if (basePackages.isEmpty()) {
+                basePackages.addAll(AutoConfigurationPackages.get(this.beanFactory));
+            }
+            if (log.isDebugEnabled()) {
+                for (String pkg : basePackages) {
+                    log.debug("Using auto-configuration base package '{}'", pkg);
+                }
+            }
+            if (null != properties.getAnnotationClass()) {
+                scanner.setAnnotationClass(properties.getAnnotationClass());
+            } else {
+                scanner.setAnnotationClass(Mapper.class);
+            }
+            Class<? extends MapperFactoryBean> mapperFactoryBeanClass = properties.getFactoryBean();
+            if (null != mapperFactoryBeanClass && !MapperFactoryBean.class.equals(mapperFactoryBeanClass)) {
+                scanner.setMapperFactoryBean(BeanUtils.instantiateClass(mapperFactoryBeanClass));
+            }
+            scanner.registerFilters();
+            scanner.doScan(StringUtils.toStringArray(basePackages));
+        } catch (IllegalStateException ex) {
+            log.debug("Could not determine auto-configuration package, automatic mapper scanning disabled.", ex);
+        }
+    }
 
 
-	/**
-	 * {@link org.mybatis.spring.annotation.MapperScan} ultimately ends up
-	 * creating instances of {@link MapperFactoryBean}. If
-	 * {@link org.mybatis.spring.annotation.MapperScan} is used then this
-	 * auto-configuration is not needed. If it is _not_ used, however, then this
-	 * will bring in a bean registrar and automatically register components based
-	 * on the same component-scanning path as Spring Boot itself.
-	 */
-	@Configuration
-	@Import({AutoConfiguredMapperScannerRegistrar.class})
-	@ConditionalOnMissingBean(MapperFactoryBean.class)
-	public static class MapperScannerRegistrarNotFoundConfiguration {
+    /**
+     * {@link org.mybatis.spring.annotation.MapperScan} ultimately ends up
+     * creating instances of {@link MapperFactoryBean}. If
+     * {@link org.mybatis.spring.annotation.MapperScan} is used then this
+     * auto-configuration is not needed. If it is _not_ used, however, then this
+     * will bring in a bean registrar and automatically register components based
+     * on the same component-scanning path as Spring Boot itself.
+     */
+    @Configuration
+    @Import({AutoConfiguredMapperScannerRegistrar.class})
+    @ConditionalOnMissingBean(MapperFactoryBean.class)
+    public static class MapperScannerRegistrarNotFoundConfiguration {
 
-		@PostConstruct
-		public void afterPropertiesSet() {
-			log.debug("No {} found.", MapperFactoryBean.class.getName());
-		}
-	}
+        @PostConstruct
+        public void afterPropertiesSet() {
+            log.debug("No {} found.", MapperFactoryBean.class.getName());
+        }
+    }
 }
