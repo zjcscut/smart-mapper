@@ -24,7 +24,7 @@ public class DefaultBatchExecutorService extends BatchExecutor implements BatchE
     public <T> int executeBatchInsert(List<T> list, int batchSize) {
         Assert.notEmpty(list, "executeBatchInsert list must not be empey!");
         Class<?> clazz = list.get(0).getClass();
-        return 0;
+        return 0   ;
     }
 
 
