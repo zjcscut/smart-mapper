@@ -1,4 +1,4 @@
-package org.throwable.mapper.support.handler.impl;
+package org.throwable.mapper.support.handler;
 
 import org.throwable.mapper.support.handler.NameStyleHandler;
 import org.throwable.mapper.utils.Strings;
@@ -9,10 +9,10 @@ import org.throwable.mapper.utils.Strings;
  * @description
  * @since 2017/3/30 23:13
  */
-public class CamelCaseToUnderLineLowerNameStyleHandler implements NameStyleHandler {
+public class CamelCaseToUnderLineUpperNameStyleHandler implements NameStyleHandler {
 
 	@Override
 	public String contert(String input) {
-		return Strings.camelhumpToUnderline(input).toLowerCase();
+		return Strings.camelhumpToUnderline(input).toUpperCase();
 	}
 }

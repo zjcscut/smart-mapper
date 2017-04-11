@@ -69,7 +69,6 @@ public abstract class ConditionSqlAppendAssistor extends SqlAppendAssistor {
 	 */
 	public static String conditionOrderByClause(String parameterName) {
 		String conditionEntity = getEntityPrefix(parameterName);
-
 		return "<if test=\"" + conditionEntity + " neq null and @org.throwable.mapper.utils.OGNL@hasOrderByClause(condition)\"> \n" +
 				"<trim prefix=\"ORDER BY\">\n" +
 				"  <foreach collection=\"" + conditionEntity + ".sort.orders\" item=\"order\" separator=\", \">\n" +

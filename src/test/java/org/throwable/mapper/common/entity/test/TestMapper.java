@@ -2,6 +2,8 @@ package org.throwable.mapper.common.entity.test;
 
 import com.google.common.collect.Lists;
 import lombok.ToString;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +20,7 @@ import org.throwable.mapper.support.plugins.condition.Condition;
 import org.throwable.mapper.support.plugins.pagination.PageModel;
 import org.throwable.mapper.support.plugins.pagination.Pager;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -62,14 +62,14 @@ public class TestMapper {
 	}
 
 	@Test
-	public void Test3()throws Exception{
+	public void Test3() throws Exception {
 		List<User> users = new ArrayList<>();
 		User user1 = new User();
 		user1.setAge(25);
 		user1.setName("ppzzzzz");
 		user1.setBirth(new Date());
 		user1.setSex("MAN");
-        users.add(user1);
+		users.add(user1);
 		User user2 = new User();
 		user2.setAge(256);
 		user2.setName("ppzzzzssdaz");
@@ -82,35 +82,35 @@ public class TestMapper {
 	}
 
 	@Test
-	public void testCondition()throws Exception{
+	public void testCondition() throws Exception {
 		Condition condition = Condition.create(User.class);
-		condition.gt("id",0).like("name","%pp%").desc("id").or("name","like","%z%");
+		condition.gt("id", 0).like("name", "%pp%").desc("id").or("name", "like", "%z%");
 		List<User> users = userMapper.selectByCondition(condition);
 		assertNotNull(users);
-		for (User u : users){
+		for (User u : users) {
 			System.out.println(u);
 		}
 		long count = userMapper.countByCondition(condition);
 		System.out.println(count);
-		PageModel<User> userPage = userMapper.selectByConditionPage(condition,new Pager(1,10));
+		PageModel<User> userPage = userMapper.selectByConditionPage(condition, new Pager(1, 10));
 		assertNotNull(userPage);
 	}
 
 	@Test
-	public void testUpdate()throws Exception{
+	public void testUpdate() throws Exception {
 		User user1 = new User();
 		user1.setAge(251);
 		user1.setSex("sdasdasd");
 		user1.setName("你好好好");
 		List<User> list = Lists.newArrayList();
 		list.add(user1);
-		int count = userMapper.batchUpdate(list);
-		System.out.println(count);
+//		int count = userMapper.batchUpdate(list);
+//		System.out.println(count);
 
 	}
 
 	@Test
-	public void testInsertUUId()throws Exception{
+	public void testInsertUUId() throws Exception {
 		User user = new User();
 		user.setSex("MAN");
 		user.setBirth(new Date());
@@ -123,14 +123,14 @@ public class TestMapper {
 
 
 	@Test
-	public void testBatchInsertUUId()throws Exception{
+	public void testBatchInsertUUId() throws Exception {
 		User user = new User();
 		user.setSex("MAN");
 		user.setBirth(new Date());
 		user.setName("zjc");
 		user.setAge(24);
-        List<User> users = Lists.newArrayList();
-        users.add(user);
+		List<User> users = Lists.newArrayList();
+		users.add(user);
 		User user1 = new User();
 		user1.setSex("WOMAN");
 		user1.setBirth(new Date());
@@ -138,12 +138,34 @@ public class TestMapper {
 		user1.setAge(242);
 		users.add(user1);
 		userMapper.batchInsert(users);
-		users.forEach(a->System.out.println(a.getId()));
+		users.forEach(a -> System.out.println(a.getId()));
 	}
 
 	@Test
-	public void testBatchExecutorService()throws Exception{
+	public void testBatchExecutorService() throws Exception {
 //		System.out.println(batchExecutorService.executeBatchInsert());
+	}
+
+	@Autowired
+	private SqlSessionFactory sqlSessionFactory;
+
+	@Test
+	public void testSqlSession() throws Exception {
+		User user = new User();
+		user.setName("zjcssss");
+		user.setId("sdsad");
+		Map<String, Object> map = new HashMap<>();
+		map.put("user", user);
+		map.put("dynamicTable", "User");
+		SqlSession sqlSession = sqlSessionFactory.openSession();
+		try {
+			sqlSession.update("org.throwable.mapper.common.entity.test.mapper.UserMapper.dynamicParams", map);
+			sqlSession.commit();
+		} finally {
+			if (null != sqlSession) {
+				sqlSession.close();
+			}
+		}
 	}
 
 }

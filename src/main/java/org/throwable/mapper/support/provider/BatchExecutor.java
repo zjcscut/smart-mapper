@@ -11,24 +11,25 @@ import java.util.List;
  */
 public abstract class BatchExecutor {
 
-    protected <T>int batchUpdate(List<T> list, Class<?> clazz,int batchSize){
-        int commitCount = (int) Math.ceil(list.size() / (double) batchSize);
-        List<T> tempList = new ArrayList<>(batchSize);
-        int start, stop;
-        for (int i = 0; i < commitCount; i++) {
-            tempList.clear();
-            start = i * batchSize;
-            stop = Math.min(i * batchSize + batchSize - 1, list.size() - 1);
-            for (int j = start; j <= stop; j++) {
-                tempList.add(list.get(j));
-            }
-        }
-        return commitCount;
-    }
+	protected <T> int batchUpdate(List<T> list, Class<?> clazz, int batchSize) {
+		int commitCount = (int) Math.ceil(list.size() / (double) batchSize);
+		List<T> tempList = new ArrayList<>(batchSize);
+		int start, stop;
+		for (int i = 0; i < commitCount; i++) {
+			tempList.clear();
+			start = i * batchSize;
+			stop = Math.min(i * batchSize + batchSize - 1, list.size() - 1);
+			for (int j = start; j <= stop; j++) {
+				tempList.add(list.get(j));
+			}
+		}
+		return commitCount;
+	}
 
-    protected <T>int batchInsert(List<T> list, Class<?> clazz,int batchSize){
+	protected <T> int batchInsert(List<T> list, Class<?> clazz, int batchSize) {
 
-    }
+		return 0;
+	}
 
 
 }

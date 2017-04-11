@@ -125,10 +125,9 @@ public abstract class AbstractMapperTemplate {
 			String nameSpace = ms.getId().substring(0, ms.getId().lastIndexOf("."));
 			Cache cache;
 			try {
-				//不存在的时候会抛出异常
+				//不存在的时候会抛出异常,详情看ScriptMap里面,如果null会抛出异常
 				cache = ms.getConfiguration().getCache(nameSpace);
 			} catch (IllegalArgumentException e) {
-				log.debug("checkCache error {}",e);
 				//ignore
 				return;
 			}
@@ -225,10 +224,10 @@ public abstract class AbstractMapperTemplate {
 			//新建MappedStatement
 			MappedStatement.Builder statementBuilder = new MappedStatement.Builder(config, keyId, sqlSource, SELECT);
 			statementBuilder.resource(ms.getResource());
-			statementBuilder.fetchSize(null);
 			statementBuilder.keyGenerator(new NoKeyGenerator());
 			statementBuilder.keyProperty(column.getProperty());
 			statementBuilder.keyColumn(null);
+			statementBuilder.fetchSize(null);
 			statementBuilder.databaseId(null);
 			statementBuilder.lang(config.getDefaultScriptingLanguageInstance());
 			statementBuilder.resultOrdered(false);

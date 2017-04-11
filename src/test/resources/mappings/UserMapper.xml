@@ -8,4 +8,8 @@
         <bind name="id" value='@java.util.UUID@randomUUID().toString().replace("-", "")'/>
         INSERT INTO User(ID,SEX,NAME,AGE,BIRTH) VALUES (#{id},#{sex},#{name},#{age},#{birth})
     </insert>
+
+    <update id="dynamicParams" parameterType="map">
+        UPDATE ${dynamicTable} SET NAME = #{user.name} WHERE ID = #{user.id}
+    </update>
 </mapper>

@@ -1,4 +1,4 @@
-package org.throwable.mapper.support.handler.impl;
+package org.throwable.mapper.support.handler;
 
 import org.throwable.mapper.support.handler.NameStyleHandler;
 
@@ -6,12 +6,12 @@ import org.throwable.mapper.support.handler.NameStyleHandler;
  * @author throwable
  * @version v1.0
  * @description
- * @since 2017/3/30 23:10
+ * @since 2017/3/30 13:26
  */
-public class UpperCaseNameStyleHandler implements NameStyleHandler{
+public class NormalNameStyleHandler implements NameStyleHandler {
 
 	@Override
 	public String contert(String input) {
-		return input.toUpperCase();
+		return input;
 	}
 }

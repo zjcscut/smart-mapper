@@ -2,8 +2,7 @@ package org.throwable.mapper.support.repository;
 
 import com.google.common.collect.Maps;
 import org.throwable.mapper.common.constant.NameStyleEnum;
-import org.throwable.mapper.support.handler.NameStyleHandler;
-import org.throwable.mapper.support.handler.impl.*;
+import org.throwable.mapper.support.handler.*;
 
 import java.util.Collections;
 import java.util.Map;

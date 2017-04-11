@@ -14,15 +14,15 @@ public interface BatchExecutorService {
 
 	int DEFAULT_BATCH_SIZE = 100;
 
-	default <T> int executeBatchInsert(List<T> list){
-		return executeBatchInsert(list,DEFAULT_BATCH_SIZE);
+	default <T> int executeBatchInsert(List<T> list) {
+		return executeBatchInsert(list, DEFAULT_BATCH_SIZE);
 	}
 
-	<T> int executeBatchInsert(List<T> list,int batchSize);
+	<T> int executeBatchInsert(List<T> list, int batchSize);
 
-	default <T> int executeBatchUpdate(List<T> list){
-		return executeBatchUpdate(list,DEFAULT_BATCH_SIZE);
+	default <T> int executeBatchUpdate(List<T> list) {
+		return executeBatchUpdate(list, DEFAULT_BATCH_SIZE);
 	}
 
-	<T> int executeBatchUpdate(List<T> list,int batchSize);
+	<T> int executeBatchUpdate(List<T> list, int batchSize);
 }
