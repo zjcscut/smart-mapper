@@ -168,4 +168,32 @@ public class TestMapper {
 		}
 	}
 
+	@Test
+	public void testDynamicSqlSource()throws Exception{
+		List<User> users = Lists.newArrayList();
+		User user1 = new User();
+		user1.setName("pp-uuid1");
+		user1.setId("uuid1");
+		user1.setAge(111);
+		users.add(user1);
+
+		User user2 = new User();
+		user2.setName("pp-uuid2");
+		user2.setId("uuid2");
+		user2.setAge(222);
+		users.add(user2);
+		Map<String, Object> map = new HashMap<>();
+		map.put("records", users);
+		map.put("dynamicTable", "User");
+		SqlSession sqlSession = sqlSessionFactory.openSession();
+		try {
+			sqlSession.update("org.throwable.mapper.common.entity.test.mapper.UserMapper.dynamicParams", map);
+			sqlSession.commit();
+		} finally {
+			if (null != sqlSession) {
+				sqlSession.close();
+			}
+		}
+	}
+
 }

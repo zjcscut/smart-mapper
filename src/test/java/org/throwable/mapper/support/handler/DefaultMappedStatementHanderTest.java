@@ -7,6 +7,7 @@ import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.scripting.xmltags.DynamicSqlSource;
+import org.apache.ibatis.scripting.xmltags.MixedSqlNode;
 import org.apache.ibatis.scripting.xmltags.SqlNode;
 import org.apache.ibatis.scripting.xmltags.TextSqlNode;
 import org.apache.ibatis.session.SqlSession;
@@ -42,7 +43,7 @@ public class DefaultMappedStatementHanderTest {
 
 	@Before
 	public void addMappedStatementToConfiguration() throws Exception {
-		SqlNode rootSqlNode = new TextSqlNode("UPDATE ${dynamicTable} SET NAME = #{user.name} WHERE ID = #{user.id}");
+		SqlNode rootSqlNode = new TextSqlNode("UPDATE ${dynamicTable} SET NAME = #{user.name}, SEX = #{user.sex} WHERE ID = #{user.id}");
 		List<ParameterMapping> parameterMappings = Lists.newArrayList();
 		List<ResultMapping> resultMappings = Lists.newArrayList();
 		defaultMappedStatementHander.addMappedStatementToConfiguration(
@@ -69,7 +70,8 @@ public class DefaultMappedStatementHanderTest {
 	public void testDynamicMappedStatement() throws Exception {
 		User user = new User();
 		user.setName("ppmoney");
-		user.setId("sdsad");
+		user.setId("uuid1");
+		user.setSex("guess");
 		Map<String, Object> map = new HashMap<>();
 		map.put("user", user);
 		map.put("dynamicTable", "User");
@@ -82,6 +84,31 @@ public class DefaultMappedStatementHanderTest {
 				sqlSession.close();
 			}
 		}
+	}
+
+
+	private SqlNode createDynamicSqlNode(){
+				" UPDATE ${dynamicTable} \n" +
+        "<trim prefix=\"set\" suffixOverrides=\",\">\n" +
+            "<trim prefix="NAME = CASE" suffix="END,">\n" +
+                <foreach collection="records" item="record">
+                    <if test="record.name != null">
+				WHEN ID = #{record.id} THEN #{record.name}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="AGE = CASE" suffix="END,">
+                <foreach collection="records" item="record">
+                    <if test="record.age != null">
+				WHEN ID = #{record.id} THEN #{record.age}
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+				WHERE ID IN
+        <foreach collection="records" separator="," item="record" open="(" close=")">
+            #{record.id}
+        </foreach>
 	}
 
 

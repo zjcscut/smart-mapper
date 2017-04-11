@@ -4,12 +4,34 @@
 <mapper namespace="org.throwable.mapper.common.entity.test.mapper.UserMapper">
 
 
-    <insert id="insertDynamicKey" useGeneratedKeys="true" keyProperty="id" parameterType="org.throwable.mapper.common.entity.test.User">
+    <insert id="insertDynamicKey" useGeneratedKeys="true" keyProperty="id"
+            parameterType="org.throwable.mapper.common.entity.test.User">
         <bind name="id" value='@java.util.UUID@randomUUID().toString().replace("-", "")'/>
         INSERT INTO User(ID,SEX,NAME,AGE,BIRTH) VALUES (#{id},#{sex},#{name},#{age},#{birth})
     </insert>
 
     <update id="dynamicParams" parameterType="map">
-        UPDATE ${dynamicTable} SET NAME = #{user.name} WHERE ID = #{user.id}
+        UPDATE ${dynamicTable}
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="NAME = CASE" suffix="END,">
+                <foreach collection="records" item="record">
+                    <if test="record.name != null">
+                        WHEN ID = #{record.id} THEN #{record.name}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="AGE = CASE" suffix="END,">
+                <foreach collection="records" item="record">
+                    <if test="record.age != null">
+                        WHEN ID = #{record.id} THEN #{record.age}
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+        WHERE ID IN
+        <foreach collection="records" separator="," item="record" open="(" close=")">
+            #{record.id}
+        </foreach>
     </update>
+
 </mapper>

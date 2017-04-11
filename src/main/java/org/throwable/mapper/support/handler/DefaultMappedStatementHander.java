@@ -7,6 +7,7 @@ import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.scripting.xmltags.DynamicSqlSource;
 import org.apache.ibatis.scripting.xmltags.SqlNode;
+import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,8 @@ public class DefaultMappedStatementHander extends AbstractMappedStatementBuilder
 
 	@Autowired
 	private SqlSessionFactory sqlSessionFactory;
+
+	private static final XMLLanguageDriver languageDriver = new XMLLanguageDriver();
 
 	@Override
 	protected SqlSource createCustomSqlSource(Configuration configuration) {
@@ -116,6 +119,11 @@ public class DefaultMappedStatementHander extends AbstractMappedStatementBuilder
 		statementBuilder.cache(null);
 
 		configuration.addMappedStatement(statementBuilder.build());
+	}
+
+
+	public SqlSource createXmlSqlSource(Configuration configuration,String sqlScript,Class<?> parameterType){
+		return languageDriver.createSqlSource(configuration, sqlScript, parameterType);
 	}
 
 	public SqlSessionFactory getSqlSessionFactory() {
