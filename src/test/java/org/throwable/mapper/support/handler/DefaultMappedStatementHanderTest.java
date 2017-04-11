@@ -1,6 +1,7 @@
 package org.throwable.mapper.support.handler;
 
 import com.google.common.collect.Lists;
+import org.apache.ibatis.executor.keygen.NoKeyGenerator;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.mapping.SqlCommandType;
@@ -61,7 +62,7 @@ public class DefaultMappedStatementHanderTest {
 				"DynamicSqlSource",
 				"id",
 				"ID",
-				null);
+				new NoKeyGenerator());
 	}
 
 	@Test
