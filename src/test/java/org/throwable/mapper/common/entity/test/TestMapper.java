@@ -38,7 +38,7 @@ public class TestMapper {
 	@Qualifier(value = "defaultBeanRegisterHandler")
 	private BeanRegisterHandler beanRegisterHandler;
 
-	@Autowired
+//	@Autowired
 	private UserMapper userMapper;
 
 	@Autowired

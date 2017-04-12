@@ -41,7 +41,7 @@ public class DefaultMappedStatementHanderTest {
 	@Autowired
 	private DefaultMappedStatementHander defaultMappedStatementHander;
 
-	@Before
+
 	public void addMappedStatementToConfiguration() throws Exception {
 		SqlNode rootSqlNode = new TextSqlNode("UPDATE ${dynamicTable} SET NAME = #{user.name}, SEX = #{user.sex} WHERE ID = #{user.id}");
 		List<ParameterMapping> parameterMappings = Lists.newArrayList();
@@ -56,6 +56,7 @@ public class DefaultMappedStatementHanderTest {
 				SqlCommandType.UPDATE,
 				"DynamicSqlSource-ParameterMap-Inline",
 				Map.class,
+				parameterMappings,
 				"DynamicSqlSource-ResultMap-Inline",
 				Integer.class,
 				resultMappings,
@@ -87,30 +88,79 @@ public class DefaultMappedStatementHanderTest {
 	}
 
 
-	private SqlNode createDynamicSqlNode(){
-				" UPDATE ${dynamicTable} \n" +
-        "<trim prefix=\"set\" suffixOverrides=\",\">\n" +
-            "<trim prefix="NAME = CASE" suffix="END,">\n" +
-                <foreach collection="records" item="record">
-                    <if test="record.name != null">
-				WHEN ID = #{record.id} THEN #{record.name}
-                    </if>
-                </foreach>
-            </trim>
-            <trim prefix="AGE = CASE" suffix="END,">
-                <foreach collection="records" item="record">
-                    <if test="record.age != null">
-				WHEN ID = #{record.id} THEN #{record.age}
-                    </if>
-                </foreach>
-            </trim>
-        </trim>
-				WHERE ID IN
-        <foreach collection="records" separator="," item="record" open="(" close=")">
-            #{record.id}
-        </foreach>
+	private SqlSource createDynamicSqlNode() {
+		String sql = " UPDATE ${dynamicTable} \n" +
+				"<trim prefix=\"set\" suffixOverrides=\",\">\n" +
+				"<trim prefix=\"NAME = CASE\" suffix=\"END,\">\n" +
+				"<foreach collection=\"records\" item=\"record\">\n" +
+				"<if test=\"record.name != null\">\n" +
+				"WHEN ID = #{record.id} THEN #{record.name}\n" +
+				"</if>\n" +
+				"</foreach>\n" +
+				"</trim>\n" +
+				"<trim prefix=\"AGE = CASE\" suffix=\"END,\">\n" +
+				"<foreach collection=\"records\" item=\"record\">\n" +
+				"<if test=\"record.age != null\">\n" +
+				"WHEN ID = #{record.id} THEN #{record.age}\n" +
+				"</if>\n" +
+				"</foreach>\n" +
+				"</trim>\n" +
+				"</trim>\n" +
+				"WHERE ID IN\n" +
+				"<foreach collection=\"records\" separator=\",\" item=\"record\" open=\"(\" close=\")\">\n" +
+				"#{record.id}\n" +
+				"</foreach>\n";
+		return defaultMappedStatementHander.createXmlSqlSource(defaultMappedStatementHander.getSqlSessionFactory().getConfiguration(),
+				sql, Map.class);
 	}
 
+	@Before
+	public void beforeDynamicSqlSource() throws Exception {
+		List<ParameterMapping> parameterMappings = Lists.newArrayList();
+		List<ResultMapping> resultMappings = Lists.newArrayList();
+		defaultMappedStatementHander.addMappedStatementToConfiguration(
+				createDynamicSqlNode(),
+				"DynamicSqlSource",
+				SqlCommandType.UPDATE,
+				"DynamicSqlSource-ParameterMap-Inline",
+				Map.class,
+				parameterMappings,
+				"DynamicSqlSource-ResultMap-Inline",
+				Integer.class,
+				resultMappings,
+				null,
+				"DynamicSqlSource",
+				"id",
+				"ID",
+				new NoKeyGenerator());
+	}
+
+	@Test
+	public void testDynamicSqlSource() throws Exception {
+		List<User> records = newArrayList();
+		User user = new User();
+		user.setName("pp@111");
+		user.setId("uuid1");
+		user.setAge(111);
+		records.add(user);
+		User user1 = new User();
+		user1.setName("pp@222");
+		user1.setId("uuid2");
+		user1.setAge(222);
+		records.add(user1);
+		Map<String, Object> map = new HashMap<>();
+		map.put("records", records);
+		map.put("dynamicTable", "User");
+		SqlSession sqlSession = defaultMappedStatementHander.getSqlSessionFactory().openSession();
+		try {
+			sqlSession.update("DynamicSqlSource", map);
+			sqlSession.commit();
+		} finally {
+			if (null != sqlSession) {
+				sqlSession.close();
+			}
+		}
+	}
 
 
 }

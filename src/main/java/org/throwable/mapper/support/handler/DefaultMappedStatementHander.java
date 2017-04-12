@@ -60,7 +60,7 @@ public class DefaultMappedStatementHander extends AbstractMappedStatementBuilder
 	@Override
 	protected MappedStatement.Builder createMappedStatementBuilder(Configuration configuration, String msId,
 																   SqlSource sqlSource, SqlCommandType sqlCommandType) {
-		return  new MappedStatement.Builder(configuration, msId, sqlSource, sqlCommandType);
+		return new MappedStatement.Builder(configuration, msId, sqlSource, sqlCommandType);
 	}
 
 	@Override
@@ -79,11 +79,12 @@ public class DefaultMappedStatementHander extends AbstractMappedStatementBuilder
 												  SqlNode sqlNode,
 												  String sql,
 												  Class<?> parameterType,
-												  List<ParameterMapping> parameterMappings,
+												  List<ParameterMapping> sqlNodeParameterMappings,
 												  String mappedStatementId,
 												  SqlCommandType sqlCommandType,
 												  String parameterMapId,
 												  Class<?> parameterMapClazz,
+												  List<ParameterMapping> parameterMappings,
 												  String resultMapId,
 												  Class<?> resultMapClazz,
 												  List<ResultMapping> resultMappings,
@@ -93,10 +94,28 @@ public class DefaultMappedStatementHander extends AbstractMappedStatementBuilder
 												  String keyColumn,
 												  KeyGenerator keyGenerator) {
 		Configuration configuration = sqlSessionFactory.getConfiguration();
-		SqlSource sqlSource = createSqlSource(sqlSourceEnum, configuration, sqlNode, sql, parameterType, parameterMappings);
+		SqlSource sqlSource = createSqlSource(sqlSourceEnum, configuration, sqlNode, sql, parameterType, sqlNodeParameterMappings);
+		addMappedStatementToConfiguration(sqlSource, mappedStatementId,
+				sqlCommandType, parameterMapId, parameterMapClazz, parameterMappings, resultMapId, resultMapClazz, resultMappings,
+				autoMappings, resource, keyProperty, keyColumn, keyGenerator);
+	}
 
+	public void addMappedStatementToConfiguration(SqlSource sqlSource,
+												  String mappedStatementId,
+												  SqlCommandType sqlCommandType,
+												  String parameterMapId,
+												  Class<?> parameterMapClazz,
+												  List<ParameterMapping> parameterMappings,
+												  String resultMapId,
+												  Class<?> resultMapClazz,
+												  List<ResultMapping> resultMappings,
+												  Boolean autoMappings,
+												  String resource,
+												  String keyProperty,
+												  String keyColumn,
+												  KeyGenerator keyGenerator) {
+		Configuration configuration = sqlSessionFactory.getConfiguration();
 		MappedStatement.Builder statementBuilder = createMappedStatementBuilder(configuration, mappedStatementId, sqlSource, sqlCommandType);
-
 		ParameterMap parameterMap = createParameterMap(configuration, parameterMapId, parameterMapClazz, parameterMappings);
 		statementBuilder.parameterMap(parameterMap);
 
@@ -122,8 +141,8 @@ public class DefaultMappedStatementHander extends AbstractMappedStatementBuilder
 	}
 
 
-	public SqlSource createXmlSqlSource(Configuration configuration,String sqlScript,Class<?> parameterType){
-		return languageDriver.createSqlSource(configuration, sqlScript, parameterType);
+	public SqlSource createXmlSqlSource(Configuration configuration, String sqlScript, Class<?> parameterType) {
+		return languageDriver.createSqlSource(configuration, "<script>\n\t" + sqlScript + "</script>", parameterType);
 	}
 
 	public SqlSessionFactory getSqlSessionFactory() {
