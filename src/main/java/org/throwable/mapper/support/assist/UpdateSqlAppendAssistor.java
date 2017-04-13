@@ -18,16 +18,16 @@ import static org.throwable.mapper.support.assist.EntityTableAssisor.*;
  */
 public abstract class UpdateSqlAppendAssistor extends ConditionSqlAppendAssistor {
 
-    public static String checkPrimaryKeyValue(Class<?> entityClass, String parameterName) {
-        return getPrimaryColumns(entityClass).stream()
-                .map(column -> {
-                    String ognlParameter = getEntityPrefix(parameterName) + column.getProperty();
-                    String exp = format(CHECK_FOR_NULL, ognlParameter, "'id must not be null for update'");
-                    return "<if test=\"" + exp + "\"/>\n";
-                })
-                .reduce(String::concat)
-                .orElse("");
-    }
+	public static String checkPrimaryKeyValue(Class<?> entityClass, String parameterName) {
+		return getPrimaryColumns(entityClass).stream()
+				.map(column -> {
+					String ognlParameter = getEntityPrefix(parameterName) + column.getProperty();
+					String exp = format(CHECK_FOR_NULL, ognlParameter, "'id must not be null for update'");
+					return "<if test=\"" + exp + "\"/>\n";
+				})
+				.reduce(String::concat)
+				.orElse("");
+	}
 
 //	public static String updateSetColumns(Class<?> entityClass) {
 //		return "<set>\n" +
@@ -44,114 +44,118 @@ public abstract class UpdateSqlAppendAssistor extends ConditionSqlAppendAssistor
 //				"</set>\n";
 //	}
 
-    public static String updateSetColumns(Class<?> entityClass) {
-        return "<set>\n" +
-                getColumnSetPairs(entityClass) +
-                "</set>\n";
-    }
+	public static String updateSetColumns(Class<?> entityClass) {
+		return "<set>\n" +
+				getColumnSetPairs(entityClass) +
+				"</set>\n";
+	}
 
-    private static String getColumnSetPairs(Class<?> entityClass) {
-        return getAllColumns(entityClass).stream()
-                .filter(column -> !column.isIdentity() && column.isUpdatable() && !column.isUUID())
-                .map(UpdateSqlAppendAssistor::getColumnPairHolder)
-                .reduce(String::concat)
-                .orElse("");
-    }
+	private static String getColumnSetPairs(Class<?> entityClass) {
+		return getAllColumns(entityClass).stream()
+				.filter(column -> !column.isIdentity() && column.isUpdatable() && !column.isUUID())
+				.map(UpdateSqlAppendAssistor::getColumnPairHolder)
+				.reduce(String::concat)
+				.orElse("");
+	}
 
-    private static String getColumnPairHolder(EntityColumn column) {
-        String content = column.getColumnEqualsHolder(PARAM_RECORD).concat(", ");
-        if (isNotNull(column)) {
-            return getIfNotNull(PARAM_RECORD, column, content);
-        } else {
-            return getIfAllowUpdateToNull(column, content);
-        }
-    }
+	private static String getColumnPairHolder(EntityColumn column) {
+		String content = column.getColumnEqualsHolder(PARAM_RECORD).concat(", ");
+		if (isNotNull(column)) {
+			return getIfNotNull(PARAM_RECORD, column, content);
+		} else {
+			return getIfAllowUpdateToNull(column, content);
+		}
+	}
 
-    public static String updateTable(Class<?> entityClass, String defaultTableName, String parameterName) {
-        return "UPDATE " + getDynamicTableName(entityClass, defaultTableName, parameterName) + " ";
-    }
+	public static String updateDynamicTable() {
+		return "UPDATE ${dynamicTableName} ";
+	}
 
-    private static String getIfAllowUpdateToNull(EntityColumn column, String content) {
-        String template = "<choose>\n" +
-                "<when test='allowUpdateToNull'>\n" +
-                "%s" +
-                "\n</when>\n" +
-                "<otherwise>\n" +
-                "<if test='%s != null'>\n" +
-                "%s" +
-                "\n</if>\n" +
-                "</otherwise>\n" +
-                "</choose>\n";
-        return format(template, content, PARAM_RECORD.concat(".").concat(column.getProperty()), content);
-    }
+	public static String updateTable(Class<?> entityClass, String defaultTableName, String parameterName) {
+		return "UPDATE " + getDynamicTableName(entityClass, defaultTableName, parameterName) + " ";
+	}
 
-    public static String primaryKeyWhereClause(Class<?> entityClass) {
-        return primaryKeyWhereClause(entityClass, PARAM_DEFAULT);
-    }
+	private static String getIfAllowUpdateToNull(EntityColumn column, String content) {
+		String template = "<choose>\n" +
+				"<when test='allowUpdateToNull'>\n" +
+				"%s" +
+				"\n</when>\n" +
+				"<otherwise>\n" +
+				"<if test='%s != null'>\n" +
+				"%s" +
+				"\n</if>\n" +
+				"</otherwise>\n" +
+				"</choose>\n";
+		return format(template, content, PARAM_RECORD.concat(".").concat(column.getProperty()), content);
+	}
 
-    public static String primaryKeyWhereClause(Class<?> entityClass, String parameterName) {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("<where>\n");
-        getPrimaryColumns(entityClass).forEach(column -> builder.append(" AND ").append(getColumnEqualsHolder(parameterName.concat("."), column)));
-        builder.append("\n</where>\n");
-        return builder.toString();
-    }
+	public static String primaryKeyWhereClause(Class<?> entityClass) {
+		return primaryKeyWhereClause(entityClass, PARAM_DEFAULT);
+	}
 
-    /**
-     * 这个方法暂时没想到怎么写,有问题,别用
-     */
-    @Deprecated
-    @SuppressWarnings("unchecked")
-    public static String getColumnSetPairsFromFilter(Object entityTable, Object selectColunm, Object allowUpdateToNull) {
-        if (entityTable instanceof EntityTable && selectColunm instanceof String && allowUpdateToNull instanceof Boolean) {
-            EntityTable table = (EntityTable) entityTable;
-            String column = (String) selectColunm;
-            Boolean enableUpdateNull = (Boolean) allowUpdateToNull;
-            EntityColumn target = table.getEntityClassColumns()
-                    .stream()
-                    .filter(a -> a.isUpdatable() && !a.isUUID() && !a.isIdentity())
-                    .findFirst()
-                    .orElse(null);
-            return getColumnPairHolder(target);
-        } else {
-            throw new IllegalArgumentException("getColumnSetPairsFromFilter fialed!");
-        }
-    }
+	public static String primaryKeyWhereClause(Class<?> entityClass, String parameterName) {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("<where>\n");
+		getPrimaryColumns(entityClass).forEach(column -> builder.append(" AND ").append(getColumnEqualsHolder(parameterName.concat("."), column)));
+		builder.append("\n</where>\n");
+		return builder.toString();
+	}
 
-    public static String batchUpdateSetColumns(Class<?> entityClass) {
-        return "\n<set>\n" +
-                "<trim suffixOverrides=\",\" prefixOverrides=\",\">\n" +
-                getBatchUpdateColumnSetPairs(entityClass) +
-                "</trim>\n" +
-                "</set>\n";
-    }
+	/**
+	 * 这个方法暂时没想到怎么写,有问题,别用
+	 */
+	@Deprecated
+	@SuppressWarnings("unchecked")
+	public static String getColumnSetPairsFromFilter(Object entityTable, Object selectColunm, Object allowUpdateToNull) {
+		if (entityTable instanceof EntityTable && selectColunm instanceof String && allowUpdateToNull instanceof Boolean) {
+			EntityTable table = (EntityTable) entityTable;
+			String column = (String) selectColunm;
+			Boolean enableUpdateNull = (Boolean) allowUpdateToNull;
+			EntityColumn target = table.getEntityClassColumns()
+					.stream()
+					.filter(a -> a.isUpdatable() && !a.isUUID() && !a.isIdentity())
+					.findFirst()
+					.orElse(null);
+			return getColumnPairHolder(target);
+		} else {
+			throw new IllegalArgumentException("getColumnSetPairsFromFilter fialed!");
+		}
+	}
 
-    private static String getBatchUpdateColumnSetPairs(Class<?> entityClass) {
-        EntityColumn key = getPrimaryColumn(entityClass);
-        Set<EntityColumn> noneKeyColumns = getNonePrimaryColumns(entityClass);
-        StringBuilder sql = new StringBuilder();
-        noneKeyColumns.forEach(a -> sql.append(buildBatchUpdateColumnSetPair(key, a)));
-        sql.append(buildBatchUpdateByPrimaryKeyWhereClause(key));
-        return sql.toString();
-    }
+	public static String batchUpdateSetColumns(Class<?> entityClass) {
+		EntityColumn key = getPrimaryColumn(entityClass);
+		Set<EntityColumn> noneKeyColumns = getNonePrimaryColumns(entityClass);
+		return "\n<trim prefix=\"set\" suffixOverrides=\",\">\n" +
+				getBatchUpdateColumnSetPairs(noneKeyColumns,key) +
+				"</trim>\n"+
+				buildBatchUpdateByPrimaryKeyWhereClause(key);
+	}
 
-    private static String buildBatchUpdateColumnSetPair(EntityColumn key, EntityColumn target) {
-        return "," +
-                target.getColumn().concat(" = ") +
-                "\n<foreach collection=\"" + PARAM_RECORDS + "\" item=\"item\" separator=\" \" open=\"" + "CASE " + key.getColumn() + "\" close=\"end\">\n" +
-                " WHEN " +
-                getColumnHolder("item.", key) +
-                " THEN " +
-                getColumnHolder("item.", target) +
-                "\n</foreach>\n";
-    }
+	private static String getBatchUpdateColumnSetPairs(Set<EntityColumn> noneKeyColumns,EntityColumn key ) {
+		StringBuilder sql = new StringBuilder();
+		noneKeyColumns.forEach(a -> sql.append(buildBatchUpdateColumnSetPair(key, a)));
+		return sql.toString();
+	}
 
-    private static String buildBatchUpdateByPrimaryKeyWhereClause(EntityColumn key) {
-        return "<where>\n" +
-                key.getColumn().concat(" IN ") +
-                "\n<foreach collection=\"" + PARAM_RECORDS + "\" item=\"item\" separator=\",\" open=\"(\" close=\")\">\n" +
-                getColumnHolder("item.", key) +
-                "\n</foreach>\n" +
-                "</where>\n";
-    }
+	private static String buildBatchUpdateColumnSetPair(EntityColumn key, EntityColumn target) {
+		String template = "<trim prefix=\"%s = CASE\" suffix=\"END,\">\n" +
+				"<foreach collection=\"records\" item=\"record\">\n" +
+				"<if test=\"record.%s != null\">\n" +
+				"WHEN %s = #{record.%s} THEN #{record.%s}\n" +
+				"</if>\n" +
+				"</foreach>\n" +
+				"</trim>\n";
+		return format(template, target.getColumn(), target.getProperty(), key.getColumn(), key.getProperty(), target.getProperty());
+	}
+
+	private static String buildBatchUpdateByPrimaryKeyWhereClause(EntityColumn key) {
+		String template = "<where> %s IN " +
+				"<foreach collection=\"records\" separator=\",\" item=\"record\" open=\"(\" close=\")\">\n" +
+				"<if test=\"record.%s != null\">\n" +
+				"#{record.%s}\n" +
+				"</if>\n" +
+				"</foreach>\n" +
+				"</where>\n";
+		return format(template, key.getColumn(), key.getProperty(), key.getProperty());
+	}
 }

@@ -249,10 +249,18 @@ public class Condition {
 	}
 
 	/**
-	 * 是否开启强制模式,开启后所有异常字段直接抛出异常,否则忽略
+	 * 是否开启强制模式,开启后所有异常字段直接抛出异常,否则忽不作条件拼接
 	 */
-	public Condition forceMode(boolean open){
+	public Condition forceMode(boolean open) {
 		this.forceMode = open;
+		return this;
+	}
+
+	/**
+	 * 此条件故意大写条件名称,用于拼接静态Sql
+	 */
+	public Condition Static(String sql) {
+		this.criteriaCollection.getLast().addCriteria(new Criteria(sql));
 		return this;
 	}
 

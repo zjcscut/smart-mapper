@@ -3,6 +3,8 @@ package org.throwable.mapper;
 
 import java.util.List;
 
+import static org.throwable.mapper.support.provider.BatchExecutor.DEFAULT_BATCH_SIZE;
+
 /**
  * @author throwable
  * @version v1.0
@@ -12,7 +14,6 @@ import java.util.List;
 
 public interface BatchExecutorService {
 
-	int DEFAULT_BATCH_SIZE = 100;
 
 	default <T> int executeBatchInsert(List<T> list) {
 		return executeBatchInsert(list, DEFAULT_BATCH_SIZE);

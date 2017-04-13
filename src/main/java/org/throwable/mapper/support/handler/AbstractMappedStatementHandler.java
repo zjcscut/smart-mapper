@@ -12,7 +12,7 @@ import java.util.List;
  * @description
  * @since 2017/4/11 11:37
  */
-public abstract class AbstractMappedStatementHandler extends AbstractMappedXmlSqlSourceBuilder {
+public abstract class AbstractMappedStatementHandler extends AbstractMappedSqlSourceBuilder {
 
 	protected abstract SqlSource createCustomSqlSource(Configuration configuration);
 

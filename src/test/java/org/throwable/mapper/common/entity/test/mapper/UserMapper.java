@@ -10,7 +10,7 @@ import org.throwable.mapper.common.entity.test.User;
  * @description
  * @since 2017/4/4 2:15
  */
-//@Mapper
+@Mapper
 public interface UserMapper extends SmartMapper<User> {
 
 	int insertDynamicKey(User user);

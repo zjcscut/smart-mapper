@@ -30,6 +30,7 @@ public class EntityColumn {
 	private Class<? extends TypeHandler<?>> typeHandler;
 	private String sequenceName;
 	private boolean UUID = false;
+	private boolean autoIncrease = false;
 	private boolean identity = false;
 	private String generator;
 	private String orderBy;

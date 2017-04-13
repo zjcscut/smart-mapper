@@ -213,6 +213,7 @@ public class EntityTableAssisor extends EntityInfoRepository {
 				entityColumn.setUUID(true);
 			} else if (generatedValue.generator().equalsIgnoreCase(GENERATED_JDBC)) {
 				entityColumn.setIdentity(true);
+				entityColumn.setAutoIncrease(true);
 				entityColumn.setGenerator("JDBC");
 				entityTable.setKeyProperties(entityColumn.getProperty());
 				entityTable.setKeyColumns(entityColumn.getColumn());
@@ -222,6 +223,7 @@ public class EntityTableAssisor extends EntityInfoRepository {
 				if (generatedValue.strategy() == GenerationType.IDENTITY && StringUtils.isNotBlank(generatedValue.generator())) {
 					//mysql的自动增长
 					entityColumn.setIdentity(true);
+					entityColumn.setAutoIncrease(true);
 					String generator;
 					IdentityDialectEnum identityDialect = IdentityDialectEnum.getDatabaseIdentityDialect(generatedValue.generator());
 					if (identityDialect != null) {

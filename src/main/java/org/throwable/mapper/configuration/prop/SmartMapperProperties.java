@@ -1,6 +1,7 @@
 package org.throwable.mapper.configuration.prop;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -196,6 +197,10 @@ public class SmartMapperProperties {
 		if (StringUtils.isNotBlank(this.nameStyle)) {
 			configuration.setStyle(NameStyleEnum.search(this.nameStyle));
 		}
+		this.propertiesConfiguration = configuration;
 		return configuration;
 	}
+
+	@Getter
+	private PropertiesConfiguration propertiesConfiguration;
 }

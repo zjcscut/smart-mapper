@@ -12,6 +12,10 @@ public interface CommonConstants {
 
 	String PARAM_DEFAULT = "_parameter";
 
+	String PARAMMAP_DEFAULT = "_ParameterMap";
+
+	String RESULTMAP_DEFAULT = "_ResultMap";
+
 	String PARAM_FIELD = "field";
 
 	String PARAM_VALUE = "value";
@@ -37,6 +41,8 @@ public interface CommonConstants {
 	String FIELD_FILTER = "fieldFilter";
 
 	String SKIP_PRIMARYKEY = "skipPrimaryKey";
+
+	String DYNAMICT_TABLENAME = "dynamicTableName";
 
 	String CONDTION_CLAUSE_EQ = " = ";
 
