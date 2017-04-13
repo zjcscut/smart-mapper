@@ -91,6 +91,7 @@ public class SmartMapperProperties {
 
 	/**
 	 * OGNL主键策略 - 当@GeneratedValue的generator = “UUID”,生成主键会使用此策略,此策略使用Mybatis的OGNL表达式,支持外部提供的主键生成方法
+	 * 目前暂时不支持多主键或者联合主键,只支持单主键
 	 */
 	private String ognlIdentityStrategy;
 
@@ -114,7 +115,7 @@ public class SmartMapperProperties {
 	private String nameStyle;
 
 	/**
-	 * Environment对象有个BUG,无法获取Yaml文件的列表类型数据,因此需要使用Properties下标获取
+	 * Environment对象无法获取Yaml文件的列表类型数据,因此需要使用Properties下标获取
 	 */
 	@SuppressWarnings("unchecked")
 	public SmartMapperProperties(Environment env) {
