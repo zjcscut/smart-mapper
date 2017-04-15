@@ -64,8 +64,8 @@ public class InsertMapperProvider extends AbstractMapperTemplate {
 		//拼接动态SQL
 		val builder = new StringBuilder(checkDefaultParamValue());
 		builder.append(insertBatchIntoTable(tableName(entityClass)));
-		builder.append(insertBatchColumns(entityClass));
-		builder.append(insertBatchValues(entityClass));
+		builder.append(insertBatchColumns(entityClass,true));
+		builder.append(insertBatchValues(entityClass,true));
 		return builder.toString();
 	}
 
@@ -76,8 +76,8 @@ public class InsertMapperProvider extends AbstractMapperTemplate {
 		//拼接动态SQL
 		val builder = new StringBuilder(checkDefaultParamValue());
 		builder.append(insertBatchIgnoreIntoTable(tableName(entityClass)));
-		builder.append(insertBatchColumns(entityClass));
-		builder.append(insertBatchValues(entityClass));
+		builder.append(insertBatchColumns(entityClass,true));
+		builder.append(insertBatchValues(entityClass,true));
 		return builder.toString();
 	}
 

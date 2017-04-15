@@ -11,3 +11,4 @@ smart-mapper:
   type-aliases-package: org.throwable.mapper.common.entity.test
   base-packages:
   - org.throwable.mapper.common.entity.test.mapper
+  ognlIdentityStrategy: "\\@java.util.UUID@randomUUID().toString().replace(\"-\", \"\")"

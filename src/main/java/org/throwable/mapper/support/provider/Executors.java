@@ -8,7 +8,11 @@ package org.throwable.mapper.support.provider;
  */
 public interface Executors {
 
-	boolean AUTO_COMMIT = false;
+	boolean NONE_AUTO_COMMIT = false;
+
+	boolean AUTO_COMMIT = true;
+
+	boolean NONE_SKIP_NULL = false;
 
 	int DEFAULT_BATCH_SIZE = 20;
 

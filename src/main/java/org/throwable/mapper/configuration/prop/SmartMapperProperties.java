@@ -183,7 +183,7 @@ public class SmartMapperProperties {
 	public PropertiesConfiguration createConfiguration() {
 		PropertiesConfiguration configuration = new PropertiesConfiguration();
 		if (StringUtils.isNotBlank(this.ognlIdentityStrategy)) {
-			configuration.setOgnlIdentityStrategy(this.ognlIdentityStrategy);
+			configuration.setOgnlIdentityStrategy(this.ognlIdentityStrategy.replace("\\","").trim());
 		}
 		if (StringUtils.isNotBlank(this.catalog)) {
 			configuration.setCatalog(this.catalog);

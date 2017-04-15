@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.throwable.mapper.common.entity.test.User;
+import org.throwable.mapper.common.entity.test.UserLong;
 
 import java.util.List;
 
@@ -54,7 +55,21 @@ public class BatchExecutorServiceTest {
 		user1.setAge(222);
 		records.add(user1);
 		batchExecutorService.executeBatchInsert(records,10);
-
 	}
+
+	@Test
+	public void executeBatchInsertIdGenerator() throws Exception {
+		List<UserLong> records = newArrayList();
+		UserLong user = new UserLong();
+		user.setName("pp@11111");
+		user.setAge(11111);
+		records.add(user);
+		UserLong user1 = new UserLong();
+		user1.setName("pp@22222");
+		user1.setAge(22222);
+		records.add(user1);
+		batchExecutorService.executeBatchInsert(records);
+	}
+
 
 }

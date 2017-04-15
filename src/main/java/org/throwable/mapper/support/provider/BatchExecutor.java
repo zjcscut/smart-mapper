@@ -28,136 +28,130 @@ import static org.throwable.mapper.support.assist.UpdateSqlAppendAssistor.update
  */
 public abstract class BatchExecutor implements Executors {
 
-	protected void assertListParams(List list, int batchSize) {
-		assertNotEmpty(list, "executeBatch list must not be empey!");
-		assertBatchSize(batchSize, "batchSize must be greater than 0!");
-	}
+    protected void assertListParams(List list, int batchSize) {
+        assertNotEmpty(list, "executeBatch list must not be empey!");
+        assertBatchSize(batchSize, "batchSize must be greater than 0!");
+    }
 
-	protected void assertNotEmpty(List list, String message) {
-		Assert.notEmpty(list, message);
-	}
+    protected void assertNotEmpty(List list, String message) {
+        Assert.notEmpty(list, message);
+    }
 
-	protected void assertBatchSize(int batchSize, String message) {
-		if (batchSize <= 0) {
-			throw new IllegalArgumentException(message);
-		}
-	}
+    protected void assertBatchSize(int batchSize, String message) {
+        if (batchSize <= 0) {
+            throw new IllegalArgumentException(message);
+        }
+    }
 
-	interface MappedClassProcessor {
+    interface MappedClassProcessor {
 
-		void initMappedClassTable();
+        void initMappedClassTable();
 
-		void initMappedParamsMap();
+        void initMappedParamsMap();
 
-		void createMappedStatementId();
-	}
+        void createMappedStatementId();
+    }
 
-	interface BatchProcessor {
+    interface BatchProcessor {
 
-		<T> void beforeExecuteBatch(List<T> list);
+        <T> void beforeExecuteBatch(List<T> list);
 
-		void executeBatchOperation(String msId, Map<String, Object> paramsMap);
+        int executeBatchOperation(String msId, Map<String, Object> paramsMap);
 
-		void afterExecuteBatch();
-	}
+        void afterExecuteBatch();
+    }
 
-	protected Map<String, Object> buildParamsMap(String tableName) {
-		Map<String, Object> params = Maps.newHashMap();
-		params.put(DYNAMICT_TABLENAME, tableName);
-		return params;
-	}
+    protected Map<String, Object> buildParamsMap(String tableName) {
+        Map<String, Object> params = Maps.newHashMap();
+        params.put(DYNAMICT_TABLENAME, tableName);
+        return params;
+    }
 
-	protected void checkExistsPriamryKey(Class<?> clazz) {
-		Assert.notNull(EntityTableAssisor.getPrimaryColumn(clazz), "Primary key column must be existed");
-	}
+    protected void checkExistsPriamryKey(Class<?> clazz) {
+        Assert.notNull(EntityTableAssisor.getPrimaryColumn(clazz), "Primary key column must be existed");
+    }
 
-	protected EntityColumn checkExistsPriamryKeyAndReturn(Class<?> clazz) {
-		EntityColumn primaryKeyColumn = EntityTableAssisor.getPrimaryColumn(clazz);
-		Assert.notNull(primaryKeyColumn, "Primary key column must be existed");
-		return primaryKeyColumn;
-	}
+    protected EntityColumn checkExistsPriamryKeyAndReturn(Class<?> clazz) {
+        EntityColumn primaryKeyColumn = EntityTableAssisor.getPrimaryColumn(clazz);
+        Assert.notNull(primaryKeyColumn, "Primary key column must be existed");
+        return primaryKeyColumn;
+    }
 
 
-	protected <T> int batchOperation(List<T> list, int batchSize, String msId, Map<String, Object> paramsMap, BatchProcessor batchProcessor) {
-		batchProcessor.beforeExecuteBatch(list);
-		int commitCount = (int) Math.ceil(list.size() / (double) batchSize);
-		List<T> tempList = new ArrayList<>(batchSize);
-		int start, stop;
-		for (int batchIndex = 0; batchIndex < commitCount; batchIndex++) {
-			tempList.clear();
-			start = batchIndex * batchSize;
-			stop = Math.min(batchIndex * batchSize + batchSize - 1, list.size() - 1);
-			for (int executeIndex = start; executeIndex <= stop; executeIndex++) {
-				tempList.add(list.get(executeIndex));
-				paramsMap.put(PARAM_RECORDS, tempList);
-			}
-			batchProcessor.executeBatchOperation(msId, paramsMap);
-		}
-		batchProcessor.afterExecuteBatch();
-		return commitCount;
-	}
+    protected <T> int batchOperation(List<T> list, int batchSize, String msId, Map<String, Object> paramsMap, BatchProcessor batchProcessor) {
+        batchProcessor.beforeExecuteBatch(list);
+        int commitCount = (int) Math.ceil(list.size() / (double) batchSize);
+        List<T> tempList = new ArrayList<>(batchSize);
+        int start, stop;
+        int batchCount = 0;
+        for (int batchIndex = 0; batchIndex < commitCount; batchIndex++) {
+            tempList.clear();
+            start = batchIndex * batchSize;
+            stop = Math.min(batchIndex * batchSize + batchSize - 1, list.size() - 1);
+            for (int executeIndex = start; executeIndex <= stop; executeIndex++) {
+                tempList.add(list.get(executeIndex));
+                paramsMap.put(PARAM_RECORDS, tempList);
+            }
+            batchCount += batchProcessor.executeBatchOperation(msId, paramsMap);
+        }
+        batchProcessor.afterExecuteBatch();
+        return batchCount;
+    }
 
-	protected String createDynamicBatchUpdateScriptSql(Class<?> clazz) {
-		return updateDynamicTable() +
-				batchUpdateSetColumns(clazz);
-	}
+    protected <T> void autoCreatePrimaryKeyByOgnlStrategy(List<T> list, EntityColumn keyColumn, String strategy) {
+        list.forEach(column -> {
+            MetaObject target = SystemMetaObject.forObject(column);
+            try {
+                target.setValue(keyColumn.getProperty(), Ognl.getValue(strategy, null));
+            } catch (OgnlException e) {
+                throw new UnsupportedOperationException(e);
+            }
+        });
+    }
 
-	protected <T> void autoCreatePrimaryKeyByOgnlStrategy(List<T> list, EntityColumn keyColumn, String strategy) {
-		list.forEach(column -> {
-			MetaObject target = SystemMetaObject.forObject(column);
-			try {
-				target.setValue(keyColumn.getProperty(), Ognl.getValue(strategy, null));
-			} catch (OgnlException e) {
-				throw new UnsupportedOperationException(e);
-			}
-		});
-	}
+    protected class DefaultMappedClassProcessor implements MappedClassProcessor {
+        @Getter
+        private Class<?> clazz;
+        @Getter
+        private String tableName;
+        @Getter
+        private PropertiesConfiguration configuration;
+        @Getter
+        private String msId;
+        @Getter
+        private String msIdPrefix;
+        @Getter
+        private Map<String, Object> paramsMap;
 
-	protected String createDynamicBatchInsertScriptSql(Class<?> clazz) {
-		return updateDynamicTable() +
-				batchUpdateSetColumns(clazz);
-	}
+        public DefaultMappedClassProcessor(Class<?> clazz, PropertiesConfiguration configuration, String msIdPrefix) {
+            this.clazz = clazz;
+            this.configuration = configuration;
+            this.msIdPrefix = msIdPrefix;
+            init();
+        }
 
-	protected class DefaultMappedClassProcessor implements MappedClassProcessor {
-		@Getter
-		private Class<?> clazz;
-		@Getter
-		private String tableName;
-		@Getter
-		private PropertiesConfiguration configuration;
-		@Getter
-		private String msId;
-		@Getter
-		private Map<String, Object> paramsMap;
+        public void init() {
+            initMappedClassTable();
+            initMappedParamsMap();
+            createMappedStatementId();
+        }
 
-		public DefaultMappedClassProcessor(Class<?> clazz, PropertiesConfiguration configuration) {
-			this.clazz = clazz;
-			this.configuration = configuration;
-			init();
-		}
+        @Override
+        public void initMappedClassTable() {
+            EntityTableAssisor.initEntityTableMap(this.clazz, this.configuration);
+            this.tableName = EntityTableAssisor.getEntityTable(this.clazz).getName();
+        }
 
-		public void init(){
-			initMappedClassTable();
-			initMappedParamsMap();
-			createMappedStatementId();
-		}
+        @Override
+        public void initMappedParamsMap() {
+            this.paramsMap = buildParamsMap(this.tableName);
+        }
 
-		@Override
-		public void initMappedClassTable() {
-			EntityTableAssisor.initEntityTableMap(clazz, configuration);
-			this.tableName = EntityTableAssisor.getEntityTable(clazz).getName();
-		}
-
-		@Override
-		public void initMappedParamsMap() {
-			this.paramsMap = buildParamsMap(this.tableName);
-		}
-
-		@Override
-		public void createMappedStatementId() {
-			this.msId = DYNAMIC_BATCHINSERT.concat(UNDER_LINE).concat(this.tableName);
-		}
-	}
+        @Override
+        public void createMappedStatementId() {
+            this.msId = this.msIdPrefix.concat(UNDER_LINE).concat(this.tableName);
+        }
+    }
 
 
 }

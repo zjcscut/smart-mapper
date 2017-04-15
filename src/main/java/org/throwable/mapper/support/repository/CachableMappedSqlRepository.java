@@ -16,13 +16,13 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public abstract class CachableMappedSqlRepository {
 
-	protected Cache<String, String> sqlCache = CacheBuilder
-			.newBuilder()
-			.maximumSize(1000)
-			.expireAfterAccess(5, TimeUnit.MINUTES)
-			.removalListener((RemovalListener<String, String>) removalNotification -> {
-				log.debug(String.format("remove key:%s,value:%s from sqlCache,cause:%s", removalNotification.getKey(),
-						removalNotification.getValue(), removalNotification.getCause()));
-			}).build();
+    protected static Cache<String, String> sqlCache = CacheBuilder
+            .newBuilder()
+            .maximumSize(1000)
+            .expireAfterAccess(5, TimeUnit.MINUTES)
+            .removalListener((RemovalListener<String, String>) removalNotification -> {
+                log.debug(String.format("remove key:%s,value:%s from sqlCache,cause:%s", removalNotification.getKey(),
+                        removalNotification.getValue(), removalNotification.getCause()));
+            }).build();
 
 }
