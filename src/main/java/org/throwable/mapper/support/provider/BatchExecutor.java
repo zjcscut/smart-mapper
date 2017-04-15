@@ -1,6 +1,7 @@
 package org.throwable.mapper.support.provider;
 
 import com.google.common.collect.Maps;
+import lombok.Getter;
 import org.apache.ibatis.ognl.Ognl;
 import org.apache.ibatis.ognl.OgnlException;
 import org.apache.ibatis.reflection.MetaObject;
@@ -10,12 +11,13 @@ import org.throwable.mapper.common.entity.EntityColumn;
 import org.throwable.mapper.configuration.prop.PropertiesConfiguration;
 import org.throwable.mapper.support.assist.EntityTableAssisor;
 
-import static org.throwable.mapper.common.constant.CommonConstants.*;
-import static org.throwable.mapper.support.assist.UpdateSqlAppendAssistor.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static org.throwable.mapper.common.constant.CommonConstants.*;
+import static org.throwable.mapper.support.assist.UpdateSqlAppendAssistor.batchUpdateSetColumns;
+import static org.throwable.mapper.support.assist.UpdateSqlAppendAssistor.updateDynamicTable;
 
 
 /**
@@ -25,8 +27,6 @@ import java.util.Map;
  * @since 2017/4/10 10:57
  */
 public abstract class BatchExecutor implements Executors {
-
-	public static final int DEFAULT_BATCH_SIZE = 20;
 
 	protected void assertListParams(List list, int batchSize) {
 		assertNotEmpty(list, "executeBatch list must not be empey!");
@@ -41,6 +41,15 @@ public abstract class BatchExecutor implements Executors {
 		if (batchSize <= 0) {
 			throw new IllegalArgumentException(message);
 		}
+	}
+
+	interface MappedClassProcessor {
+
+		void initMappedClassTable();
+
+		void initMappedParamsMap();
+
+		void createMappedStatementId();
 	}
 
 	interface BatchProcessor {
@@ -59,12 +68,12 @@ public abstract class BatchExecutor implements Executors {
 	}
 
 	protected void checkExistsPriamryKey(Class<?> clazz) {
-		Assert.notNull(EntityTableAssisor.getPrimaryColumn(clazz), "Primary key column must not be null");
+		Assert.notNull(EntityTableAssisor.getPrimaryColumn(clazz), "Primary key column must be existed");
 	}
 
 	protected EntityColumn checkExistsPriamryKeyAndReturn(Class<?> clazz) {
 		EntityColumn primaryKeyColumn = EntityTableAssisor.getPrimaryColumn(clazz);
-		Assert.notNull(primaryKeyColumn, "Primary key column must not be null");
+		Assert.notNull(primaryKeyColumn, "Primary key column must be existed");
 		return primaryKeyColumn;
 	}
 
@@ -93,11 +102,11 @@ public abstract class BatchExecutor implements Executors {
 				batchUpdateSetColumns(clazz);
 	}
 
-	protected <T> void autoCreatePrimaryKeyByOgnlStrategy(List<T> list, EntityColumn keyColumn,String strategy) {
-		list.forEach(l -> {
-			MetaObject target = SystemMetaObject.forObject(l);
+	protected <T> void autoCreatePrimaryKeyByOgnlStrategy(List<T> list, EntityColumn keyColumn, String strategy) {
+		list.forEach(column -> {
+			MetaObject target = SystemMetaObject.forObject(column);
 			try {
-				target.setValue(keyColumn.getProperty(), Ognl.getValue(strategy,null));
+				target.setValue(keyColumn.getProperty(), Ognl.getValue(strategy, null));
 			} catch (OgnlException e) {
 				throw new UnsupportedOperationException(e);
 			}
@@ -107,6 +116,47 @@ public abstract class BatchExecutor implements Executors {
 	protected String createDynamicBatchInsertScriptSql(Class<?> clazz) {
 		return updateDynamicTable() +
 				batchUpdateSetColumns(clazz);
+	}
+
+	protected class DefaultMappedClassProcessor implements MappedClassProcessor {
+		@Getter
+		private Class<?> clazz;
+		@Getter
+		private String tableName;
+		@Getter
+		private PropertiesConfiguration configuration;
+		@Getter
+		private String msId;
+		@Getter
+		private Map<String, Object> paramsMap;
+
+		public DefaultMappedClassProcessor(Class<?> clazz, PropertiesConfiguration configuration) {
+			this.clazz = clazz;
+			this.configuration = configuration;
+			init();
+		}
+
+		public void init(){
+			initMappedClassTable();
+			initMappedParamsMap();
+			createMappedStatementId();
+		}
+
+		@Override
+		public void initMappedClassTable() {
+			EntityTableAssisor.initEntityTableMap(clazz, configuration);
+			this.tableName = EntityTableAssisor.getEntityTable(clazz).getName();
+		}
+
+		@Override
+		public void initMappedParamsMap() {
+			this.paramsMap = buildParamsMap(this.tableName);
+		}
+
+		@Override
+		public void createMappedStatementId() {
+			this.msId = DYNAMIC_BATCHINSERT.concat(UNDER_LINE).concat(this.tableName);
+		}
 	}
 
 

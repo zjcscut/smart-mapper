@@ -1,4 +1,4 @@
-package org.throwable.mapper.support.plugins;
+package org.throwable.mapper.support.plugins.generator.table;
 
 /**
  * @author throwable

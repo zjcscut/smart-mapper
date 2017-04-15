@@ -106,7 +106,7 @@ public class EntityTableAssisor extends EntityInfoRepository {
 	}
 
 
-	public static synchronized void initEntityNameMap(Class<?> entityClass, PropertiesConfiguration configuration) {
+	public static synchronized void initEntityTableMap(Class<?> entityClass, PropertiesConfiguration configuration) {
 		if (null != entityTableMap.get(entityClass)) {
 			return;
 		}

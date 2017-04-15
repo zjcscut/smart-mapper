@@ -4,13 +4,9 @@ import jodd.introspector.ClassIntrospector;
 import jodd.introspector.FieldDescriptor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.scripting.xmltags.ChooseSqlNode;
-import org.apache.ibatis.scripting.xmltags.IfSqlNode;
-import org.apache.ibatis.scripting.xmltags.SqlNode;
-import org.apache.ibatis.scripting.xmltags.TextSqlNode;
 import org.throwable.mapper.common.entity.EntityColumn;
 import org.throwable.mapper.exception.UnsupportedElementException;
-import org.throwable.mapper.support.plugins.DynamicTableName;
+import org.throwable.mapper.support.plugins.generator.table.DynamicTableName;
 
 import javax.validation.constraints.NotNull;
 import java.util.Objects;

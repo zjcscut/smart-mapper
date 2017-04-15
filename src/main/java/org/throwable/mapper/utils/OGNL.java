@@ -2,7 +2,7 @@ package org.throwable.mapper.utils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.throwable.mapper.support.assist.SqlAppendAssistor;
-import org.throwable.mapper.support.plugins.DynamicTableName;
+import org.throwable.mapper.support.plugins.generator.table.DynamicTableName;
 import org.throwable.mapper.support.plugins.condition.Condition;
 
 

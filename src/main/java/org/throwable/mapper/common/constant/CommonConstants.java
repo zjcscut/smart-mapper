@@ -10,6 +10,8 @@ public interface CommonConstants {
 
 	String COMMA = ",";
 
+	String UNDER_LINE = "_";
+
 	String PARAM_DEFAULT = "_parameter";
 
 	String PARAMMAP_DEFAULT = "_ParameterMap";

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.throwable.mapper.support.plugins;
+package org.throwable.mapper.support.plugins.generator.identity;
 
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.ExecutorException;

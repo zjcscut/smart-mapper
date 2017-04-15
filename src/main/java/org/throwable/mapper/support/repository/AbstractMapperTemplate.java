@@ -19,7 +19,7 @@ import org.throwable.mapper.exception.BeanRegisterHandleException;
 import org.throwable.mapper.support.assist.EntityTableAssisor;
 import org.throwable.mapper.support.assist.MapperTemplateAssistor;
 import org.throwable.mapper.support.assist.SqlAppendAssistor;
-import org.throwable.mapper.support.plugins.MultipleJdbc3KeyGenerator;
+import org.throwable.mapper.support.plugins.generator.identity.MultipleJdbc3KeyGenerator;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -312,7 +312,7 @@ public abstract class AbstractMapperTemplate {
 					.map(t -> {
 						Class<?> returnType = (Class<?>) t.getActualTypeArguments()[0];
 						//获取该类型后，第一次对该类型进行初始化
-						EntityTableAssisor.initEntityNameMap(returnType, mapperTemplateAssistor.getConfig());
+						EntityTableAssisor.initEntityTableMap(returnType, mapperTemplateAssistor.getConfig());
 						entityClassMap.put(msId, returnType);
 						return returnType;
 					})

@@ -21,7 +21,7 @@ public class FieldFilterAssistorTest {
 
 	@Test
 	public void testFilter()throws Exception{
-		EntityTableAssisor.initEntityNameMap(User.class,new PropertiesConfiguration());
+		EntityTableAssisor.initEntityTableMap(User.class,new PropertiesConfiguration());
 		Set<EntityColumn>  sets = EntityTableAssisor.getEntityTable(User.class).getEntityClassColumns();
 		sets = FieldFilterAssistor.filter(sets,new ExcludeFieldFilter("Name,birth"));
 		assertNotNull(sets);

@@ -21,7 +21,7 @@ public class InsertSqlAppendAssistorTest {
 
 	@Before
 	public void setUp() throws Exception {
-		EntityTableAssisor.initEntityNameMap(User.class, new PropertiesConfiguration());
+		EntityTableAssisor.initEntityTableMap(User.class, new PropertiesConfiguration());
 	}
 
 	@Test

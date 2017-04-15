@@ -14,7 +14,7 @@ import org.throwable.mapper.common.entity.EntityColumn;
 import org.throwable.mapper.configuration.prop.SmartMapperProperties;
 import org.throwable.mapper.support.assist.EntityTableAssisor;
 import org.throwable.mapper.support.handler.DefaultMappedStatementHander;
-import org.throwable.mapper.support.plugins.MultipleJdbc3KeyGenerator;
+import org.throwable.mapper.support.plugins.generator.identity.MultipleJdbc3KeyGenerator;
 
 import java.util.List;
 import java.util.Map;
@@ -44,11 +44,10 @@ public class DefaultBatchExecutorService extends BatchExecutor implements BatchE
 		assertListParams(list, batchSize);
 		int size = list.size();
 		Class<?> clazz = list.iterator().next().getClass();
-		String tableName = EntityTableAssisor.getEntityTable(clazz).getName();
-		Map<String, Object> params = buildParamsMap(tableName);
+		DefaultMappedClassProcessor processor = new DefaultMappedClassProcessor(clazz, smartMapperProperties.getPropertiesConfiguration());
+		String msId = processor.getMsId();
 		SqlSession sqlSession = defaultMappedStatementHander.getSqlSessionFactory().openSession(ExecutorType.BATCH, AUTO_COMMIT);
-		String msId = DYNAMIC_BATCHUPDATE.concat("_").concat(tableName);
-		batchOperation(list, batchSize, msId, params, new BatchProcessor() {
+		batchOperation(list, batchSize, msId, processor.getParamsMap(), new BatchProcessor() {
 
 			@Override
 			public <T> void beforeExecuteBatch(List<T> list) {
@@ -93,11 +92,11 @@ public class DefaultBatchExecutorService extends BatchExecutor implements BatchE
 		assertListParams(list, batchSize);
 		int size = list.size();
 		Class<?> clazz = list.iterator().next().getClass();
-		String tableName = EntityTableAssisor.getEntityTable(clazz).getName();
-		Map<String, Object> params = buildParamsMap(tableName);
+		//懒初始化classTable
+		DefaultMappedClassProcessor processor = new DefaultMappedClassProcessor(clazz, smartMapperProperties.getPropertiesConfiguration());
+		String msId = processor.getMsId();
 		SqlSession sqlSession = defaultMappedStatementHander.getSqlSessionFactory().openSession(ExecutorType.BATCH, AUTO_COMMIT);
-		String msId = DYNAMIC_BATCHINSERT.concat("_").concat(tableName);
-		batchOperation(list, batchSize, msId, params, new BatchProcessor() {
+		batchOperation(list, batchSize, msId, processor.getParamsMap(), new BatchProcessor() {
 
 			@Override
 			public <T> void beforeExecuteBatch(List<T> list) {
@@ -131,7 +130,6 @@ public class DefaultBatchExecutorService extends BatchExecutor implements BatchE
 							keyColumn.getColumn(),
 							keyGenerator);
 				}
-
 			}
 
 			@Override

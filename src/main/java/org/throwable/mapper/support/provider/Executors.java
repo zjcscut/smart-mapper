@@ -10,6 +10,8 @@ public interface Executors {
 
 	boolean AUTO_COMMIT = false;
 
+	int DEFAULT_BATCH_SIZE = 20;
+
 	String DYNAMIC_BATCHUPDATE = "dynamicBatchUpdate";
 
 	String DYNAMIC_BATCHINSERT = "dynamicBatchInsert";
