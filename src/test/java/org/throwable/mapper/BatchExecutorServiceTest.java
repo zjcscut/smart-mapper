@@ -39,7 +39,7 @@ public class BatchExecutorServiceTest {
 		user1.setId("uuid2");
 		user1.setAge(222);
 		records.add(user1);
-		batchExecutorService.executeBatchUpdate(records,10);
+		batchExecutorService.executeBatchUpdate(records);
 
 	}
 

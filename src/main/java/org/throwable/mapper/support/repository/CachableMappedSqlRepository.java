@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
  * @version v1.0
  * @description
  * @since 2017/4/15 13:35
+ *
  */
 @Slf4j
 public abstract class CachableMappedSqlRepository {

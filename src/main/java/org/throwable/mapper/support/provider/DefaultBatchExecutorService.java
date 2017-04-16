@@ -159,6 +159,7 @@ public class DefaultBatchExecutorService extends BatchExecutor implements BatchE
 
     @Override
     public <T> int update(T t, boolean skipNull) {
+    	log.error("DefaultBatchExecutorService update method execute!!!!!!");
         return 1;
     }
 
