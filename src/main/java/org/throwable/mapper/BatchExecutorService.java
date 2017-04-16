@@ -18,39 +18,39 @@ import static org.throwable.mapper.support.provider.BatchExecutor.*;
 
 public interface BatchExecutorService {
 
-    default <T> int executeBatchInsert(List<T> list) {
-        return executeBatchInsert(list, DEFAULT_BATCH_SIZE);
-    }
+	default <T> int executeBatchInsert(List<T> list) {
+		return executeBatchInsert(list, DEFAULT_BATCH_SIZE);
+	}
 
-    <T> int executeBatchInsert(List<T> list, int batchSize);
+	<T> int executeBatchInsert(List<T> list, int batchSize);
 
-    default <T> int executeBatchUpdate(List<T> list, boolean skipNull) {
-        return executeBatchUpdate(list, DEFAULT_BATCH_SIZE, skipNull);
-    }
+	default <T> int executeBatchUpdate(List<T> list, boolean skipNull) {
+		return executeBatchUpdate(list, DEFAULT_BATCH_SIZE, skipNull);
+	}
 
-    default <T> int executeBatchUpdate(List<T> list) {
-        return executeBatchUpdate(list, DEFAULT_BATCH_SIZE, NONE_SKIP_NULL);
-    }
+	default <T> int executeBatchUpdate(List<T> list) {
+		return executeBatchUpdate(list, DEFAULT_BATCH_SIZE, NONE_SKIP_NULL);
+	}
 
-    <T> int executeBatchUpdate(List<T> list, int batchSize, boolean skipNull);
+	<T> int executeBatchUpdate(List<T> list, int batchSize, boolean skipNull);
 
-    default <T> int update(T t) {
-        return update(t, NONE_SKIP_NULL);
-    }
+	default <T> int update(T t) {
+		return update(t, NONE_SKIP_NULL);
+	}
 
-    <T> int update(T t, boolean skipNull);
+	<T> int update(T t, boolean skipNull);
 
-    default <T> int updateByCondition(Condition condition) {
-        return updateByCondition(condition, NONE_SKIP_NULL);
-    }
+	default  int updateByCondition(Condition condition) {
+		return updateByCondition(condition, NONE_SKIP_NULL);
+	}
 
-    <T> int updateByCondition(Condition condition, boolean skipNull);
+	int updateByCondition(Condition condition, boolean skipNull);
 
-    <T> T selectOneByCondition(Class<T> clazz, Condition condition);
+	<T> T selectOneByCondition(Condition condition);
 
-    <T> List<T> selectListByCondtion(Class<T> clazz, Condition condition);
+	<T> List<T> selectListByCondtion(Condition condition);
 
-    <T> long countByCondtion(Class<T> clazz, Condition condition);
+	long countByCondtion(Condition condition);
 
-    <T> PageModel<T> selectListByCondtionPage(Class<T> clazz, Condition condition, Pager pager);
+	<T> PageModel<T> selectListByCondtionPage(Condition condition, Pager pager);
 }

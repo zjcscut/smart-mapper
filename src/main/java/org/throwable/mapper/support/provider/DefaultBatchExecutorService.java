@@ -253,22 +253,22 @@ public class DefaultBatchExecutorService extends BatchExecutor implements BatchE
 	}
 
 	@Override
-	public <T> T selectOneByCondition(Class<T> clazz, Condition condition) {
+	public <T> T selectOneByCondition(Condition condition) {
 		return null;
 	}
 
 	@Override
-	public <T> List<T> selectListByCondtion(Class<T> clazz, Condition condition) {
+	public <T> List<T> selectListByCondtion(Condition condition) {
 		return null;
 	}
 
 	@Override
-	public <T> long countByCondtion(Class<T> clazz, Condition condition) {
+	public long countByCondtion(Condition condition) {
 		return 0;
 	}
 
 	@Override
-	public <T> PageModel<T> selectListByCondtionPage(Class<T> clazz, Condition condition, Pager pager) {
+	public <T> PageModel<T> selectListByCondtionPage( Condition condition, Pager pager) {
 		return null;
 	}
 }
