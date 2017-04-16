@@ -3,7 +3,9 @@ package org.throwable.mapper.support.assist;
 import org.throwable.mapper.common.entity.EntityColumn;
 import org.throwable.mapper.common.entity.EntityTable;
 
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static org.throwable.mapper.common.constant.CommonConstants.*;
@@ -122,22 +124,35 @@ public abstract class UpdateSqlAppendAssistor extends ConditionSqlAppendAssistor
 		}
 	}
 
-	public static String batchUpdateSetColumns(Class<?> entityClass) {
+	public static String batchUpdateSetColumns(Class<?> entityClass, boolean skipNull) {
 		EntityColumn key = getPrimaryColumn(entityClass);
 		Set<EntityColumn> noneKeyColumns = getNonePrimaryColumns(entityClass);
 		return "\n<trim prefix=\"set\" suffixOverrides=\",\">\n" +
-				getBatchUpdateColumnSetPairs(noneKeyColumns,key) +
-				"</trim>\n"+
+				getBatchUpdateColumnSetPairs(noneKeyColumns, key, skipNull) +
+				"</trim>\n" +
 				buildBatchUpdateByPrimaryKeyWhereClause(key);
 	}
 
-	private static String getBatchUpdateColumnSetPairs(Set<EntityColumn> noneKeyColumns,EntityColumn key ) {
+	private static String getBatchUpdateColumnSetPairs(Set<EntityColumn> noneKeyColumns, EntityColumn key, boolean skipNull) {
 		StringBuilder sql = new StringBuilder();
-		noneKeyColumns.forEach(a -> sql.append(buildBatchUpdateColumnSetPair(key, a)));
+		noneKeyColumns.forEach(column -> sql.append(buildBatchUpdateColumnSetPair(key, column, skipNull)));
 		return sql.toString();
 	}
 
-	private static String buildBatchUpdateColumnSetPair(EntityColumn key, EntityColumn target) {
+	private static String buildBatchUpdateColumnSetPair(EntityColumn key, EntityColumn target, boolean skipNull) {
+		return skipNull ? batchUpdateColumnSetSkipNullPair(key, target) : batchUpdateColumnSetNoneSkipNullPair(key, target);
+	}
+
+	private static String batchUpdateColumnSetNoneSkipNullPair(EntityColumn key, EntityColumn target) {
+		String template = "<trim prefix=\"%s = CASE\" suffix=\"END,\">\n" +
+				"<foreach collection=\"records\" item=\"record\">\n" +
+				"WHEN %s = #{record.%s} THEN #{record.%s}\n" +
+				"</foreach>\n" +
+				"</trim>\n";
+		return format(template, target.getColumn(), target.getProperty(), key.getColumn(), key.getProperty(), target.getProperty());
+	}
+
+	private static String batchUpdateColumnSetSkipNullPair(EntityColumn key, EntityColumn target) {
 		String template = "<trim prefix=\"%s = CASE\" suffix=\"END,\">\n" +
 				"<foreach collection=\"records\" item=\"record\">\n" +
 				"<if test=\"record.%s != null\">\n" +
@@ -157,5 +172,52 @@ public abstract class UpdateSqlAppendAssistor extends ConditionSqlAppendAssistor
 				"</foreach>\n" +
 				"</where>\n";
 		return format(template, key.getColumn(), key.getProperty(), key.getProperty());
+	}
+
+	public static String dynamicUpdateSetColumns(Class<?> entityClass, boolean skipNull) {
+		Set<EntityColumn> noneKeyColumns = getNonePrimaryColumns(entityClass);
+		return "\n<trim prefix=\"set\" suffixOverrides=\",\">\n" +
+				buildDynamicUpdateSetPairs(noneKeyColumns, skipNull) +
+				"</trim>\n";
+
+	}
+
+	private static String buildDynamicUpdateSetPairs(Set<EntityColumn> noneKeyColumns, boolean skipNull) {
+		StringBuilder sql = new StringBuilder();
+		noneKeyColumns.forEach(column -> sql.append(buildDynamicUpdateSetPair(column, skipNull)));
+		return sql.toString();
+	}
+
+	private static String buildDynamicUpdateSetPair(EntityColumn target, boolean skipNull) {
+		return skipNull ? buildDynamicUpdateSkipNullSetPair(target) : buildDynamicUpdateNoneSkipNullSetPair(target);
+	}
+
+	private static String buildDynamicUpdateNoneSkipNullSetPair(EntityColumn target) {
+		String template = "%s = %s\n";
+		return format(template, target.getColumn(), getColumnHolderWithComma(PARAM_RECORD.concat(DOT), target));
+	}
+
+	private static String buildDynamicUpdateSkipNullSetPair(EntityColumn target) {
+		String template = "<if test=\"record.%s neq null\">\n" +
+				"%s = %s\n" +
+				"</if>\n";
+		return format(template, target.getProperty(), target.getColumn(), getColumnHolderWithComma(PARAM_RECORD.concat(DOT), target));
+	}
+
+	public static String buildDynamicUpdateWhereClause(Class<?> entityClass) {
+		EntityColumn key = getPrimaryColumn(entityClass);
+		String template = "WHERE %s = %s";
+		return format(template, key.getColumn(), getColumnHolder(PARAM_RECORD.concat(DOT), key));
+	}
+
+	public static String dynamicUpdateByCondtionSetColumns(Class<?> entityClass, Set<String> updateColumnSet, boolean skipNull) {
+		Set<EntityColumn> allColumns = getAllColumns(entityClass);
+		Set<EntityColumn> updateColumns = allColumns.stream()
+				.filter(column -> updateColumnSet.contains(column.getColumn()))
+				.collect(Collectors.toSet());
+		return "\n<trim prefix=\"set\" suffixOverrides=\",\">\n" +
+				buildDynamicUpdateSetPairs(updateColumns, skipNull) +
+				"</trim>\n";
+
 	}
 }

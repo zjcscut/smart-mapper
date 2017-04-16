@@ -18,12 +18,12 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @NameStyle(value = NameStyleEnum.CAMELCASE_TO_UNDERLINE_UPPERCASE)
-@Table(name = "User")
+@Table(name = "USER_AUTO_INCREASE")
 @Entity
 public class UserLong {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "UUID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "JDBC")
     @Column(name = "ID")
     private Long id;
 

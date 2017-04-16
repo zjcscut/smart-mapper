@@ -56,6 +56,11 @@ public class Condition {
 	private Set<String> selectColumns;
 
 	@Getter
+	private Map<String, Object> updateFieldMap;
+	@Getter
+	private Set<String> updateColumnSet;
+
+	@Getter
 	private LinkedList<CriteriaCollection> criteriaCollection;
 
 	@Getter
@@ -66,8 +71,12 @@ public class Condition {
 		this.sort = new Sort();
 		this.criteriaCollection = Lists.newLinkedList();
 		this.criteriaCollection.addLast(new CriteriaCollection());
+		EntityTable entityTable = EntityTableAssisor.getCondtionEntityTable(entity);
+		if (null == entityTable) {
+			EntityTableAssisor.initEntityTableMap(entity);
+		}
 		this.entityTable = EntityTableAssisor.getEntityTable(entity);
-		this.propertyMap = entityTable.getPropertyMap();
+		this.propertyMap = this.entityTable.getPropertyMap();
 	}
 
 	public static Condition create(Class<?> entity) {
@@ -99,7 +108,7 @@ public class Condition {
 		}
 		if (check) {
 			this.fieldFilter = fieldFilter;
-			this.selectColumns = convertFieldFilterToSelectColumns(fieldFilter, entityTable.getEntityClass());
+			this.selectColumns = convertFieldFilterToSelectColumns(fieldFilter, entity);
 		}
 		return this;
 	}
@@ -265,6 +274,24 @@ public class Condition {
 	}
 
 	/**
+	 * update变量使用
+	 */
+	public Condition setVar(String field, Object value) {
+		if (checkMatchColumn(field)) {
+			if (null == updateFieldMap && null == updateColumnSet) {
+				updateFieldMap = new HashMap<>();
+				updateFieldMap.put(field, value);
+				updateColumnSet = new HashSet<>();
+				updateColumnSet.add(matchColumn(field));
+			} else {
+				updateFieldMap.put(field, value);
+				updateColumnSet.add(matchColumn(field));
+			}
+		}
+		return this;
+	}
+
+	/**
 	 * 条件集合
 	 */
 	@Getter
@@ -374,7 +401,8 @@ public class Condition {
 
 	private Set<String> convertFieldFilterToSelectColumns(FieldFilter fieldFilter, Class<?> entityClass) {
 		if (null != fieldFilter) {
-			return FieldFilterAssistor.getFilterColumns(entityClass, fieldFilter, false).stream()
+			return FieldFilterAssistor.getFilterColumns(entityClass, fieldFilter, false)
+					.stream()
 					.map(EntityColumn::getColumn)
 					.collect(Collectors.toSet());
 		}

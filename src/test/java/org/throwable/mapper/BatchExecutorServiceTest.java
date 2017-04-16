@@ -1,5 +1,7 @@
 package org.throwable.mapper;
 
+import lombok.extern.slf4j.Slf4j;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.throwable.mapper.common.entity.test.User;
 import org.throwable.mapper.common.entity.test.UserLong;
+import org.throwable.mapper.configuration.prop.PropertiesConfiguration;
+import org.throwable.mapper.support.assist.EntityTableAssisor;
+import org.throwable.mapper.support.filter.impl.IncludeFieldFilter;
+import org.throwable.mapper.support.plugins.condition.Condition;
 
 import java.util.List;
 
@@ -21,6 +27,7 @@ import static org.junit.Assert.*;
  */
 @SpringBootTest(classes = Application.class)
 @RunWith(SpringJUnit4ClassRunner.class)
+@Slf4j
 public class BatchExecutorServiceTest {
 
 	@Autowired
@@ -54,7 +61,7 @@ public class BatchExecutorServiceTest {
 		user1.setName("pp@222");
 		user1.setAge(222);
 		records.add(user1);
-		batchExecutorService.executeBatchInsert(records,10);
+		batchExecutorService.executeBatchInsert(records, 10);
 	}
 
 	@Test
@@ -71,5 +78,29 @@ public class BatchExecutorServiceTest {
 		batchExecutorService.executeBatchInsert(records);
 	}
 
+	@Test
+	public void executeUpdate() throws Exception {
+		UserLong user = new UserLong();
+		user.setId(1L);
+		user.setName("zjcscut1");
+		user.setAge(26);
+		long start = System.currentTimeMillis();
+		batchExecutorService.update(user, true);
+		log.error("cost time:" + (System.currentTimeMillis() - start) + " ms");
+		System.out.println("cost time:" + (System.currentTimeMillis() - start) + " ms");
 
+		long start2 = System.currentTimeMillis();
+		batchExecutorService.update(user, true);
+		log.error("cost time 2:" + (System.currentTimeMillis() - start2) + " ms");
+		System.out.println("cost time 2:" + (System.currentTimeMillis() - start2) + " ms");
+
+	}
+
+	@Test
+	public void executeUpdateCondtion() throws Exception {
+		Condition condition = Condition.create(UserLong.class);
+		condition.and("id", "=", 1L);
+		condition.setVar("name", "zjc-111");
+		batchExecutorService.updateByCondition(condition, true);
+	}
 }

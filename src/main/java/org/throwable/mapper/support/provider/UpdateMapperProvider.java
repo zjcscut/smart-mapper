@@ -46,7 +46,7 @@ public class UpdateMapperProvider extends AbstractMapperTemplate {
 		StringBuilder builder = new StringBuilder();
 		builder.append(checkParamValue(PARAM_RECORDS));
 		builder.append(updateTable(entityClass, tableName(entityClass), PARAM_RECORDS));
-		builder.append(batchUpdateSetColumns(entityClass));
+		builder.append(batchUpdateSetColumns(entityClass, true));
 		return builder.toString();
 	}
 }

@@ -39,6 +39,10 @@ public class EntityTableAssisor extends EntityInfoRepository {
 		return entityTable;
 	}
 
+	public static EntityTable getCondtionEntityTable(Class<?> entityClass) {
+		return entityTableMap.get(entityClass);
+	}
+
 	public static String getDefaultOrderByClause(Class<?> entityClass) {
 		EntityTable table = getEntityTable(entityClass);
 		if (null != table.getOrderByClause()) {
@@ -76,7 +80,7 @@ public class EntityTableAssisor extends EntityInfoRepository {
 		if (columns.size() == 1) {
 			return columns.iterator().next();
 		} else {
-			throw new UnsupportedOperationException(String.format("暂不支持联合主键,实体类名:%s", entityClass.getCanonicalName()));
+			throw new UnsupportedOperationException(String.format("暂不支持联合主键或多个主键,实体类名:%s", entityClass.getCanonicalName()));
 		}
 	}
 
@@ -106,10 +110,16 @@ public class EntityTableAssisor extends EntityInfoRepository {
 	}
 
 
+	//使用緩存配置進行初始化
+	public static synchronized void initEntityTableMap(Class<?> entityClass){
+		initEntityTableMap(entityClass,getConfiguration());
+	}
+
 	public static synchronized void initEntityTableMap(Class<?> entityClass, PropertiesConfiguration configuration) {
 		if (null != entityTableMap.get(entityClass)) {
 			return;
 		}
+		setConfiguration(configuration); //緩存配置
 		NameStyleEnum style = configuration.getStyle();
 		//style，该注解优先于全局配置
 		if (entityClass.isAnnotationPresent(NameStyle.class)) {

@@ -19,4 +19,8 @@ public interface Executors {
 	String DYNAMIC_BATCHUPDATE = "dynamicBatchUpdate";
 
 	String DYNAMIC_BATCHINSERT = "dynamicBatchInsert";
+
+	String DYNAMIC_UPDATE = "dynamicUpdate";
+
+	String DYNAMIC_UPDATE_CONDITION = "dynamicByCondition";
 }

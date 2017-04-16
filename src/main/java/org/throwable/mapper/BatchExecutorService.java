@@ -40,11 +40,11 @@ public interface BatchExecutorService {
 
     <T> int update(T t, boolean skipNull);
 
-    default <T> int updateByCondition(T t, Condition condition) {
-        return updateByCondition(t, condition, NONE_SKIP_NULL);
+    default <T> int updateByCondition(Condition condition) {
+        return updateByCondition(condition, NONE_SKIP_NULL);
     }
 
-    <T> int updateByCondition(T t, Condition condition, boolean skipNull);
+    <T> int updateByCondition(Condition condition, boolean skipNull);
 
     <T> T selectOneByCondition(Class<T> clazz, Condition condition);
 
