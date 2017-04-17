@@ -59,6 +59,22 @@ public abstract class BatchExecutor extends SingleExecutor implements Executors 
 		void afterExecuteBatch();
 	}
 
+	interface SelectListProcessor {
+
+		void beforeExecute(Map<String, Object> paramsMap);
+
+		<T> List<T> executeOperation(String msId, Map<String, Object> paramsMap);
+
+		void afterExecute();
+	}
+
+	protected <T> List<T> selectListOperation(String msId, Map<String, Object> paramsMap, SelectListProcessor selectListProcessor) {
+		selectListProcessor.beforeExecute(paramsMap);
+		List<T> list = selectListProcessor.executeOperation(msId, paramsMap);
+		selectListProcessor.afterExecute();
+		return list;
+	}
+
 	protected Map<String, Object> buildParamsMap(String tableName) {
 		Map<String, Object> params = Maps.newHashMap();
 		params.put(DYNAMICT_TABLENAME, tableName);

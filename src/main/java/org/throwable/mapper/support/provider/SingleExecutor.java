@@ -1,10 +1,7 @@
 package org.throwable.mapper.support.provider;
 
 
-import java.util.List;
 import java.util.Map;
-
-import static org.throwable.mapper.common.constant.CommonConstants.*;
 
 /**
  * @author throwable
@@ -44,22 +41,6 @@ public abstract class SingleExecutor {
         T t = selectOneProcessor.executeSingleOperation(msId, paramsMap);
         selectOneProcessor.afterSingleExecute();
         return t;
-    }
-
-    interface SelectListProcessor {
-
-        void beforeExecute(Map<String, Object> paramsMap);
-
-        <T> List<T> executeOperation(String msId, Map<String, Object> paramsMap);
-
-        void afterExecute();
-    }
-
-    protected <T> List<T> selectListOperation(String msId, Map<String, Object> paramsMap, SelectListProcessor selectListProcessor) {
-        selectListProcessor.beforeExecute(paramsMap);
-        List<T> list = selectListProcessor.executeOperation(msId, paramsMap);
-        selectListProcessor.afterExecute();
-        return list;
     }
 
     interface CountProcessor{
