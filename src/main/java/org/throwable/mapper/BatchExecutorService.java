@@ -48,9 +48,9 @@ public interface BatchExecutorService {
 
 	<T> T selectOneByCondition(Condition condition);
 
-	<T> List<T> selectListByCondtion(Condition condition);
+	<T> List<T> selectListByCondition(Condition condition);
 
-	long countByCondtion(Condition condition);
+	long countByCondition(Condition condition);
 
-	<T> PageModel<T> selectListByCondtionPage(Condition condition, Pager pager);
+	<T> PageModel<T> selectListByConditionPage(Condition condition, Pager pager);
 }

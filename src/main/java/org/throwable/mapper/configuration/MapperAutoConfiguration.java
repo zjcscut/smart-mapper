@@ -1,5 +1,6 @@
 package org.throwable.mapper.configuration;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -10,8 +11,10 @@ import org.springframework.context.annotation.Configuration;
 import org.throwable.mapper.configuration.prop.PropertiesConfiguration;
 import org.throwable.mapper.configuration.prop.SmartMapperProperties;
 import org.throwable.mapper.support.assist.MapperTemplateAssistor;
+import org.throwable.mapper.support.repository.EntityInfoRepository;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Field;
 import java.util.stream.Stream;
 
 /**
@@ -24,6 +27,7 @@ import java.util.stream.Stream;
 @ConditionalOnClass({SqlSessionFactory.class, SqlSessionFactoryBean.class})
 @ConditionalOnBean({DataSource.class, SqlSessionFactory.class})
 @EnableConfigurationProperties({SmartMapperProperties.class})
+@Slf4j
 public class MapperAutoConfiguration implements InitializingBean {
 
 	private final SqlSessionFactory sqlSessionFactory;
@@ -42,12 +46,13 @@ public class MapperAutoConfiguration implements InitializingBean {
 	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
+		cacheSmartMapperGlobalConfiguration(properties.createConfiguration());
 		registryMappers();
 		dynamicRegistryMappedStatements();
 	}
 
 	private void registryMappers() {
-		PropertiesConfiguration configuration = properties.createConfiguration();
+		PropertiesConfiguration configuration = properties.getPropertiesConfiguration();
 		MapperTemplateAssistor assistor = new MapperTemplateAssistor(configuration);
 		Stream.of(configuration.getRegisterMappers()).forEach(assistor::registerMapper);
 		assistor.processConfiguration(sqlSessionFactory.getConfiguration());
@@ -55,6 +60,21 @@ public class MapperAutoConfiguration implements InitializingBean {
 
 	private void dynamicRegistryMappedStatements() {
 
+	}
+
+	/**
+	 * 缓存全局配置
+	 *
+	 * @param configuration configuration
+	 */
+	private void cacheSmartMapperGlobalConfiguration(PropertiesConfiguration configuration) {
+		try {
+			Field target = EntityInfoRepository.class.getDeclaredField("configuration");
+			target.setAccessible(true);
+			target.set("configuration", configuration);
+		} catch (Exception e) {
+			log.error("cache SmartMapper global configuration failed!", e);
+		}
 	}
 
 }

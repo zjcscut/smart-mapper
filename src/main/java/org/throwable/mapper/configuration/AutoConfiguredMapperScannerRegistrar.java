@@ -110,4 +110,6 @@ public class AutoConfiguredMapperScannerRegistrar implements BeanFactoryAware, I
             log.debug("No {} found.", MapperFactoryBean.class.getName());
         }
     }
+
+
 }

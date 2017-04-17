@@ -22,5 +22,13 @@ public interface Executors {
 
 	String DYNAMIC_UPDATE = "dynamicUpdate";
 
-	String DYNAMIC_UPDATE_CONDITION = "dynamicByCondition";
+	String DYNAMIC_UPDATE_CONDITION = "dynamicUpdateByCondition";
+
+	String DYNAMIC_SELECTONE_CONDITION = "dynamicSelectOneByCondition";
+
+	String DYNAMIC_SELECTLIST_CONDITION = "dynamicSelectListByCondition";
+
+	String DYNAMIC_COUNT_CONDITION = "dynamicCountByCondition";
+
+	String DYNAMIC_SELECTPAGE_CONDITION = "dynamicSelectByConditionPage";
 }
