@@ -1,16 +1,15 @@
 package org.throwable.mapper.support.assist;
 
 import org.throwable.mapper.common.entity.EntityColumn;
-import org.throwable.mapper.common.entity.EntityTable;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
-import static org.throwable.mapper.common.constant.CommonConstants.*;
-import static org.throwable.mapper.utils.OGNL.CHECK_FOR_NULL;
+import static org.throwable.mapper.common.constant.CommonConstants.DOT;
+import static org.throwable.mapper.common.constant.CommonConstants.PARAM_RECORD;
 import static org.throwable.mapper.support.assist.EntityTableAssisor.*;
+import static org.throwable.mapper.utils.OGNL.CHECK_FOR_NULL;
 
 /**
  * @author throwable
@@ -30,21 +29,6 @@ public abstract class UpdateSqlAppendAssistor extends ConditionSqlAppendAssistor
 				.reduce(String::concat)
 				.orElse("");
 	}
-
-//	public static String updateSetColumns(Class<?> entityClass) {
-//		return "<set>\n" +
-//				"<if test=\"condition neq null and @org.throwable.mapper.utils.OGNL@hasSelectColumns(condition)\">\n" +
-//				"<if test=\"condition neq null and condition.selectColumns neq null\">\n" +
-//				"\n<foreach collection=\"condition.selectColumns\" item=\"selectColumn\" separator=\",\">\n" +
-//				"${@org.throwable.mapper.support.assist.UpdateSqlAppendAssistor@getColumnSetPairsFromFilter(condition.entityTable,selectColumn,allowUpdateToNull)}\n" +
-//				"\n</foreach>\n" +
-//				"</if>\n" +
-//				"</if>\n" +
-//				"<if test=\"condition eq null or @org.throwable.mapper.utils.OGNL@hasNotSelectColumns(condition)\">\n" +
-//				getColumnSetPairs(entityClass) +
-//				"</if>\n" +
-//				"</set>\n";
-//	}
 
 	public static String updateSetColumns(Class<?> entityClass) {
 		return "<set>\n" +
@@ -91,38 +75,6 @@ public abstract class UpdateSqlAppendAssistor extends ConditionSqlAppendAssistor
 		return format(template, content, PARAM_RECORD.concat(".").concat(column.getProperty()), content);
 	}
 
-	public static String primaryKeyWhereClause(Class<?> entityClass) {
-		return primaryKeyWhereClause(entityClass, PARAM_DEFAULT);
-	}
-
-	public static String primaryKeyWhereClause(Class<?> entityClass, String parameterName) {
-		final StringBuilder builder = new StringBuilder();
-		builder.append("<where>\n");
-		getPrimaryColumns(entityClass).forEach(column -> builder.append(" AND ").append(getColumnEqualsHolder(parameterName.concat("."), column)));
-		builder.append("\n</where>\n");
-		return builder.toString();
-	}
-
-	/**
-	 * 这个方法暂时没想到怎么写,有问题,别用
-	 */
-	@Deprecated
-	@SuppressWarnings("unchecked")
-	public static String getColumnSetPairsFromFilter(Object entityTable, Object selectColunm, Object allowUpdateToNull) {
-		if (entityTable instanceof EntityTable && selectColunm instanceof String && allowUpdateToNull instanceof Boolean) {
-			EntityTable table = (EntityTable) entityTable;
-			String column = (String) selectColunm;
-			Boolean enableUpdateNull = (Boolean) allowUpdateToNull;
-			EntityColumn target = table.getEntityClassColumns()
-					.stream()
-					.filter(a -> a.isUpdatable() && !a.isUUID() && !a.isIdentity())
-					.findFirst()
-					.orElse(null);
-			return getColumnPairHolder(target);
-		} else {
-			throw new IllegalArgumentException("getColumnSetPairsFromFilter fialed!");
-		}
-	}
 
 	public static String batchUpdateSetColumns(Class<?> entityClass, boolean skipNull) {
 		EntityColumn key = getPrimaryColumn(entityClass);

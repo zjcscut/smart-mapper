@@ -76,7 +76,7 @@ public class TestMapper {
 		user2.setBirth(new Date());
 		user2.setSex("MAN");
 		users.add(user2);
-		userMapper.batchInsert(users);
+//		userMapper.batchInsert(users);
 		System.out.println(user1.getId());
 		System.out.println(user2.getId());
 	}
@@ -137,7 +137,7 @@ public class TestMapper {
 		user1.setName("aaaaa");
 		user1.setAge(242);
 		users.add(user1);
-		userMapper.batchInsert(users);
+//		userMapper.batchInsert(users);
 		users.forEach(a -> System.out.println(a.getId()));
 	}
 

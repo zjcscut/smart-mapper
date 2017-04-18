@@ -5,6 +5,7 @@ import org.throwable.mapper.support.plugins.condition.Condition;
 import org.throwable.mapper.support.plugins.pagination.PageModel;
 import org.throwable.mapper.support.plugins.pagination.Pager;
 
+import javax.validation.constraints.Min;
 import java.util.List;
 
 import static org.throwable.mapper.support.provider.BatchExecutor.*;
@@ -40,7 +41,7 @@ public interface BatchExecutorService {
 
 	<T> int update(T t, boolean skipNull);
 
-	default  int updateByCondition(Condition condition) {
+	default int updateByCondition(Condition condition) {
 		return updateByCondition(condition, NONE_SKIP_NULL);
 	}
 
@@ -52,5 +53,22 @@ public interface BatchExecutorService {
 
 	long countByCondition(Condition condition);
 
-	<T> PageModel<T> selectListByConditionPage(Condition condition, Pager pager);
+	default <T> List<T> selectByConditionLimit(Condition condition, @Min(1) int limit) {
+		condition.limit(0, limit);
+		return selectListByCondition(condition);
+	}
+
+	default <T> PageModel<T> selectListByConditionPage(Condition condition, Pager pager) {
+		long total = countByCondition(condition);
+		int lastPage = pager.getLastPage(total);
+		int offset = pager.getOffset();
+		if (offset > lastPage) {
+			pager.setPageNumber(offset);
+			condition.limit(lastPage, pager.getPageSize());
+		} else {
+			condition.limit(pager.getOffset(), pager.getPageSize());
+		}
+		List<T> list = selectListByCondition(condition);
+		return new PageModel<>(pager.getPageNumber(), pager.getPageSize(), total, list);
+	}
 }

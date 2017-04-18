@@ -5,39 +5,27 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.throwable.mapper.support.assist.MapperTemplateAssistor;
 import org.throwable.mapper.support.repository.AbstractMapperTemplate;
 
+import static org.throwable.mapper.support.assist.DeleteSqlAppendAssistor.*;
+
 /**
  * @author throwable
  * @version v1.0
  * @description
  * @since 2017/4/4 0:17
  */
-public class DeleteMapperProvider  extends AbstractMapperTemplate {
+public class DeleteMapperProvider extends AbstractMapperTemplate {
 
 	public DeleteMapperProvider(Class<?> mapperClass, MapperTemplateAssistor mapperTemplateAssistor) {
 		super(mapperClass, mapperTemplateAssistor);
 	}
 
-	public String deleteByPrimaryKey(MappedStatement ms){
+	public String deleteByPrimaryKey(MappedStatement ms) {
 		val entityClass = getEntityClass(ms);
 		StringBuilder builder = new StringBuilder();
+		builder.append(deleteFromTable(entityClass, tableName(entityClass)));
+		builder.append(deletePrimaryKeyWhereClause(entityClass));
 		return builder.toString();
 	}
 
-	public String delete(MappedStatement ms){
-		val entityClass = getEntityClass(ms);
-		StringBuilder builder = new StringBuilder();
-		return builder.toString();
-	}
 
-	public String deleteByCondition(MappedStatement ms){
-		val entityClass = getEntityClass(ms);
-		StringBuilder builder = new StringBuilder();
-		return builder.toString();
-	}
-
-	public String deleteByField(MappedStatement ms){
-		val entityClass = getEntityClass(ms);
-		StringBuilder builder = new StringBuilder();
-		return builder.toString();
-	}
 }

@@ -2,7 +2,8 @@ package org.throwable.mapper.support.assist;
 
 import org.throwable.mapper.common.entity.EntityColumn;
 
-import static org.throwable.mapper.common.constant.CommonConstants.*;
+import static org.throwable.mapper.common.constant.CommonConstants.PARAM_DEFAULT;
+import static org.throwable.mapper.support.assist.EntityTableAssisor.getPrimaryColumns;
 
 /**
  * @author throwable
@@ -84,5 +85,17 @@ public abstract class ConditionSqlAppendAssistor extends SqlAppendAssistor {
 	public static String conditionLimitClause(String parameterName) {
 		String pagerEntity = getEntityPrefix(parameterName);
 		return getIfNotNull(pagerEntity, String.format(" LIMIT #{%s.offset}, #{%s.size}", pagerEntity, pagerEntity));
+	}
+
+	public static String primaryKeyWhereClause(Class<?> entityClass) {
+		return primaryKeyWhereClause(entityClass, PARAM_DEFAULT);
+	}
+
+	public static String primaryKeyWhereClause(Class<?> entityClass, String parameterName) {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("<where>\n");
+		getPrimaryColumns(entityClass).forEach(column -> builder.append(" AND ").append(getColumnEqualsHolder(parameterName.concat("."), column)));
+		builder.append("\n</where>\n");
+		return builder.toString();
 	}
 }

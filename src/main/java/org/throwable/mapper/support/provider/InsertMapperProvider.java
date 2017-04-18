@@ -5,8 +5,9 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.throwable.mapper.support.assist.MapperTemplateAssistor;
 import org.throwable.mapper.support.repository.AbstractMapperTemplate;
 
-import static org.throwable.mapper.support.assist.SqlAppendAssistor.*;
 import static org.throwable.mapper.support.assist.InsertSqlAppendAssistor.*;
+import static org.throwable.mapper.support.assist.SqlAppendAssistor.checkDefaultParamValue;
+import static org.throwable.mapper.support.assist.SqlAppendAssistor.getIdentityColumn;
 
 /**
  * @author throwable
@@ -55,31 +56,5 @@ public class InsertMapperProvider extends AbstractMapperTemplate {
 		builder.append(insertValues(entityClass, null, false));
 		return builder.toString();
 	}
-
-
-	public String batchInsert(MappedStatement ms) {
-		val entityClass = getEntityClass(ms);
-		//主键回写
-		getIdentityColumn(entityClass).ifPresent(column -> newSelectKeyMappedStatement(ms, column));
-		//拼接动态SQL
-		val builder = new StringBuilder(checkDefaultParamValue());
-		builder.append(insertBatchIntoTable(tableName(entityClass)));
-		builder.append(insertBatchColumns(entityClass,true));
-		builder.append(insertBatchValues(entityClass,true));
-		return builder.toString();
-	}
-
-	public String batchInsertIgnore(MappedStatement ms) {
-		val entityClass = getEntityClass(ms);
-		//主键回写
-		getIdentityColumn(entityClass).ifPresent(column -> newSelectKeyMappedStatement(ms, column));
-		//拼接动态SQL
-		val builder = new StringBuilder(checkDefaultParamValue());
-		builder.append(insertBatchIgnoreIntoTable(tableName(entityClass)));
-		builder.append(insertBatchColumns(entityClass,true));
-		builder.append(insertBatchValues(entityClass,true));
-		return builder.toString();
-	}
-
 
 }

@@ -12,7 +12,6 @@ import javax.validation.constraints.Min;
 import java.util.List;
 
 import static org.throwable.mapper.common.constant.CommonConstants.PARAM_CONDITION;
-import static org.throwable.mapper.common.constant.CommonConstants.PARAM_PAGER;
 
 /**
  * @author throwable
@@ -44,8 +43,6 @@ public interface SelectMapper<T> {
 		List<T> list = selectByCondition(condition);
 		return new PageModel<>(pager.getPageNumber(), pager.getPageSize(), count, list);
 	}
-
-
 
 	@SelectProvider(type = SelectMapperProvider.class, method = "dynamicSQL")
 	long countByCondition(@NonNull @Param(PARAM_CONDITION) Condition condition);

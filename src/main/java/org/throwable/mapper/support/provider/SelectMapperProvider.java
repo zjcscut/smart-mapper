@@ -41,7 +41,7 @@ public class SelectMapperProvider extends AbstractMapperTemplate {
 		val entityClass = getEntityClass(ms);
 		StringBuilder builder = new StringBuilder();
 		builder.append(checkParamValue(PARAM_CONDITION));
-		builder.append(selectCountStart());
+		builder.append(selectCountStar());
 		builder.append(fromTable(entityClass, tableName(entityClass)));
 		builder.append(conditionWhereClause(PARAM_CONDITION));
 		return builder.toString();

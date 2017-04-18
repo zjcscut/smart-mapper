@@ -9,6 +9,7 @@ import org.mybatis.spring.mapper.MapperFactoryBean;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -22,6 +23,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.StringUtils;
 import org.throwable.mapper.configuration.prop.SmartMapperProperties;
+import org.throwable.mapper.support.plugins.javassist.MapperProxyRewritor;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -43,16 +45,23 @@ public class AutoConfiguredMapperScannerRegistrar implements BeanFactoryAware, I
 
     private SmartMapperProperties properties;
 
-    //为了获取mybatis一些基本的配置属性
+
+	//为了获取mybatis一些基本的配置属性
     @Override
     public void setEnvironment(Environment environment) {
+		try {
+			MapperProxyRewritor.rewriteMapperProxy();
+		} catch (Exception e) {
+			//ignore
+		}
         properties = new SmartMapperProperties(environment);
     }
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
         log.debug("Scanning mapper interfaces and register them into ioc container");
-        ClassPathMapperScanner scanner = new ClassPathMapperScanner(registry);
+
+		ClassPathMapperScanner scanner = new ClassPathMapperScanner(registry);
         try {
             if (null != this.resourceLoader) {
                 scanner.setResourceLoader(this.resourceLoader);

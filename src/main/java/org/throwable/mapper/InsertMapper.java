@@ -23,9 +23,4 @@ public interface InsertMapper<T> {
 	@InsertProvider(type = InsertMapperProvider.class, method = "dynamicSQL")
 	int insertIngore(T t);
 
-	@InsertProvider(type = InsertMapperProvider.class, method = "dynamicSQL")
-	int batchInsert(List<T> t);
-
-	@InsertProvider(type = InsertMapperProvider.class, method = "dynamicSQL")
-	int batchInsertIgnore(List<T> t);
 }

@@ -41,6 +41,7 @@ public class MapperAutoConfiguration implements InitializingBean {
 
 	/**
 	 * 关键步骤
+	 * 0:缓存全局配置
 	 * 1:注册SmartMapper
 	 * 2:动态注册所有自定义的MappedStatement
 	 */

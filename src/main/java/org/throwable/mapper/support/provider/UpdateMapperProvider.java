@@ -3,11 +3,11 @@ package org.throwable.mapper.support.provider;
 import lombok.val;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.throwable.mapper.support.assist.MapperTemplateAssistor;
-
-import static org.throwable.mapper.common.constant.CommonConstants.*;
-import static org.throwable.mapper.support.assist.UpdateSqlAppendAssistor.*;
-
 import org.throwable.mapper.support.repository.AbstractMapperTemplate;
+
+import static org.throwable.mapper.common.constant.CommonConstants.PARAM_ALLOW_UPDATE_TO_NULL;
+import static org.throwable.mapper.common.constant.CommonConstants.PARAM_RECORD;
+import static org.throwable.mapper.support.assist.UpdateSqlAppendAssistor.*;
 
 /**
  * @author throwable
@@ -31,22 +31,4 @@ public class UpdateMapperProvider extends AbstractMapperTemplate {
 		return builder.toString();
 	}
 
-	public String update(MappedStatement ms) {
-		val entityClass = getEntityClass(ms);
-		StringBuilder builder = new StringBuilder();
-		builder.append(checkParamValue(PARAM_RECORD, PARAM_CONDITION, PARAM_ALLOW_UPDATE_TO_NULL));
-		builder.append(updateTable(entityClass, tableName(entityClass), PARAM_RECORD));
-		builder.append(updateSetColumns(entityClass));
-		builder.append(conditionWhereClause(PARAM_CONDITION));
-		return builder.toString();
-	}
-
-	public String batchUpdate(MappedStatement ms) {
-		val entityClass = getEntityClass(ms);
-		StringBuilder builder = new StringBuilder();
-		builder.append(checkParamValue(PARAM_RECORDS));
-		builder.append(updateTable(entityClass, tableName(entityClass), PARAM_RECORDS));
-		builder.append(batchUpdateSetColumns(entityClass, true));
-		return builder.toString();
-	}
 }
