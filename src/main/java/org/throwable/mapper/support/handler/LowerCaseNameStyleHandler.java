@@ -1,7 +1,5 @@
 package org.throwable.mapper.support.handler;
 
-import org.throwable.mapper.support.handler.NameStyleHandler;
-
 /**
  * @author throwable
  * @version v1.0

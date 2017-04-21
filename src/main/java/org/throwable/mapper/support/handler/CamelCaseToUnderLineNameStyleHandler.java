@@ -1,6 +1,5 @@
 package org.throwable.mapper.support.handler;
 
-import org.throwable.mapper.support.handler.NameStyleHandler;
 import org.throwable.mapper.utils.Strings;
 
 /**
