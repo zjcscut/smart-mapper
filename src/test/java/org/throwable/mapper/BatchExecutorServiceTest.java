@@ -16,7 +16,9 @@ import org.throwable.mapper.support.plugins.condition.Condition;
 import org.throwable.mapper.support.plugins.pagination.PageModel;
 import org.throwable.mapper.support.plugins.pagination.Pager;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.*;
@@ -101,8 +103,11 @@ public class BatchExecutorServiceTest {
     @Test
     public void executeUpdateCondtion() throws Exception {
         Condition condition = Condition.create(UserLong.class);
-        condition.and("id", "=", 1L);
-        condition.setVar("name", "zjc-111");
+        condition.and("id", "=", 1L).forceMode(true);
+        Map<String, Object> vars = new HashMap<>();
+        vars.put("Name", "zjc-condition");
+        vars.put("age", 2222222);
+        condition.setVars(vars);
         batchExecutorService.updateByCondition(condition, true);
     }
 

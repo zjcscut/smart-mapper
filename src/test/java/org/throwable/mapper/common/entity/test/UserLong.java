@@ -18,7 +18,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @NameStyle(value = NameStyleEnum.CAMELCASE_TO_UNDERLINE_UPPERCASE)
-@Table(name = "USER_AUTO_INCREASE")
+@Table(name = "USER_AUTO_INCREACE")
 @Entity
 public class UserLong {
 

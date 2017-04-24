@@ -3,8 +3,7 @@ package org.throwable.mapper.support.plugins.condition;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
 import org.throwable.mapper.common.entity.EntityColumn;
 import org.throwable.mapper.common.entity.EntityTable;
 import org.throwable.mapper.exception.UnsupportedElementException;
@@ -30,7 +29,7 @@ import static org.throwable.mapper.common.constant.CommonConstants.*;
  */
 public class Condition {
 
-    private static final boolean FORCE_MODE = false;
+    private static final boolean FORCE_MODE = true;
 
     @Getter
     private final Class<?> entity;
@@ -274,11 +273,11 @@ public class Condition {
     }
 
     /**
-     * update变量使用
+     * update变量
      */
     public Condition setVar(String field, Object value) {
         if (checkMatchColumn(field)) {
-            if (null == updateFieldMap && null == updateColumnSet) {
+            if (null == updateFieldMap || null == updateColumnSet) {
                 updateFieldMap = new HashMap<>();
                 updateFieldMap.put(field, value);
                 updateColumnSet = new HashSet<>();
@@ -288,6 +287,27 @@ public class Condition {
                 updateColumnSet.add(matchColumn(field));
             }
         }
+        return this;
+    }
+
+    /**
+     * update变量
+     */
+    public Condition setVars(Map<String, Object> vars) {
+        Assert.notEmpty(vars, "set vars params must not be empty");
+        vars.forEach((key, value) -> {
+            if (checkMatchColumn(key)) {
+                if (null == updateFieldMap || null == updateColumnSet) {
+                    updateFieldMap = new HashMap<>();
+                    updateFieldMap.put(key, value);
+                    updateColumnSet = new HashSet<>();
+                    updateColumnSet.add(matchColumn(key));
+                } else {
+                    updateFieldMap.put(key, value);
+                    updateColumnSet.add(matchColumn(key));
+                }
+            }
+        });
         return this;
     }
 
@@ -393,7 +413,7 @@ public class Condition {
 
     private Collection<?> convertStringToCollection(Object value) {
         if (value instanceof String) {
-            String[] values = ((String) value).replace("(","").replace(")","").split(COMMA);
+            String[] values = ((String) value).replace("(", "").replace(")", "").split(COMMA);
             return ArraysUtils.arrayToList(values);
         }
         return (Collection<?>) value;
@@ -421,11 +441,11 @@ public class Condition {
         result = result * 31 + entityTable.hashCode();
         result = result * 31 + sort.hashCode();
         if (null != criteriaCollection)
-        result = result * 31 + criteriaCollection.hashCode();
+            result = result * 31 + criteriaCollection.hashCode();
         if (null != selectColumns)
-        result = result * 31 + selectColumns.hashCode();
+            result = result * 31 + selectColumns.hashCode();
         if (null != updateColumnSet)
-        result = result * 31 + updateColumnSet.hashCode();
+            result = result * 31 + updateColumnSet.hashCode();
         return result;
     }
 }
